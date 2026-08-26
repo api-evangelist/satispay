@@ -1,0 +1,151 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://github.com/satispay (org repo listing + releases API), https://repo.packagist.org/p2/,
+  https://developers.satispay.com/docs/official-plugins
+note: >-
+  Satispay ships first-party PHP, Java and Swift client libraries plus five official e-commerce plugins.
+  There is no first-party JavaScript/TypeScript, Python, Go, Ruby, .NET or Rust SDK — the npm packages
+  matching "satispay" (@lucadiba/satispay-client, @volverjs/satispay-node-sdk, node-satispay,
+  @satispay-authentication/*) are all community projects published from non-Satispay GitHub orgs and are
+  recorded below as official:false. Maven Central did not answer within the probe budget, so the Java SDK
+  version is read from its GitHub release tag instead and its registry coordinates are recorded as unknown.
+packages:
+- name: satispay/gbusiness-api-php-sdk
+  language: PHP
+  registry: packagist
+  url: https://packagist.org/packages/satispay/gbusiness-api-php-sdk
+  repository: https://github.com/satispay/gbusiness-api-php-sdk
+  official: true
+  version: 1.4.1
+  published: '2024-10-17'
+  downloads_total: 230937
+  note: >-
+    The first-party PHP SDK for the GBusiness API. Latest release predates the 1.8.x documentation branch
+    (1.8.0 through 1.8.7 shipped after this release), so the SDK trails the API it wraps.
+- name: satispay/online-api-php-sdk
+  language: PHP
+  registry: packagist
+  url: https://packagist.org/packages/satispay/online-api-php-sdk
+  repository: https://github.com/satispay/gbusiness-api-php-sdk
+  official: true
+  version: 1.4.1
+  published: '2024-10-17'
+  downloads_total: 4856
+  deprecated: true
+  note: >-
+    Legacy Packagist alias; its GitHub repo satispay/online-api-php-sdk is archived and the package now
+    resolves to the same source as gbusiness-api-php-sdk. Use gbusiness-api-php-sdk instead.
+- name: in-store-api-java-sdk
+  language: Java
+  registry: unknown
+  url: https://github.com/satispay/in-store-api-java-sdk
+  repository: https://github.com/satispay/in-store-api-java-sdk
+  official: true
+  version: 0.0.47
+  published: '2022-05-27'
+  note: >-
+    First-party Java SDK for the in-store API, distributed from GitHub releases. Maven Central search did
+    not respond within the probe budget so registry coordinates were not confirmed; version and date are
+    read from the GitHub release tag. Last release 2022 — the oldest first-party client Satispay ships.
+- name: in-store-api-swift-sdk
+  language: Swift
+  registry: unknown
+  url: https://github.com/satispay/in-store-api-swift-sdk
+  repository: https://github.com/satispay/in-store-api-swift-sdk
+  official: true
+  version: null
+  published: null
+  note: >-
+    First-party Swift SDK. The repository publishes no GitHub release and no tag, and is not on CocoaPods
+    trunk or a Swift Package Index listing we could confirm, so there is no version to record — a consumer
+    can only pin a git revision. Last push 2025-01-08.
+- name: satispay/magento2-plugin
+  language: PHP
+  registry: packagist
+  url: https://packagist.org/packages/satispay/magento2-plugin
+  repository: https://github.com/satispay/magento2-plugin
+  official: true
+  kind: ecommerce-plugin
+  version: 2.2.6
+  published: '2026-03-05'
+  downloads_total: 31954
+- name: satispay/shopware6-plugin
+  language: PHP
+  registry: packagist
+  url: https://packagist.org/packages/satispay/shopware6-plugin
+  repository: https://github.com/satispay/shopware-plugin
+  official: true
+  kind: ecommerce-plugin
+  version: 3.1.0
+  published: '2025-07-29'
+  downloads_total: 63
+- name: woocommerce-plugin
+  language: PHP
+  registry: cdn
+  url: https://github.com/satispay/woocommerce-plugin/releases
+  repository: https://github.com/satispay/woocommerce-plugin
+  official: true
+  kind: ecommerce-plugin
+  version: v.2.2.8
+  published: '2025-07-17'
+  note: Distributed as a GitHub release ZIP and through the WooCommerce marketplace; not on Packagist.
+- name: prestashop-plugin
+  language: PHP
+  registry: cdn
+  url: https://github.com/satispay/prestashop-plugin/releases
+  repository: https://github.com/satispay/prestashop-plugin
+  official: true
+  kind: ecommerce-plugin
+  version: 2.5.1
+  published: '2026-05-05'
+  note: Distributed as a GitHub release ZIP; not on Packagist. The most recently released first-party artifact.
+- name: Shopify app
+  language: n/a
+  registry: cdn
+  url: https://developers.satispay.com/docs/shopify
+  official: true
+  kind: ecommerce-plugin
+  version: null
+  published: null
+  note: >-
+    Listed as an official plugin in the docs but distributed through the Shopify app store rather than a
+    package registry or a public Satispay repository, so no version or release date is published.
+- name: '@lucadiba/satispay-client'
+  language: JavaScript
+  registry: npm
+  url: https://www.npmjs.com/package/@lucadiba/satispay-client
+  official: false
+  version: 1.0.2
+  published: '2025-03-10'
+  note: Community Node.js client, not published by Satispay.
+- name: '@volverjs/satispay-node-sdk'
+  language: JavaScript
+  registry: npm
+  url: https://www.npmjs.com/package/@volverjs/satispay-node-sdk
+  official: false
+  version: 0.0.4
+  published: '2025-12-03'
+  note: Self-described "(Unofficial) Satispay GBusiness Node.js API SDK".
+- name: '@satispay-authentication/core'
+  language: JavaScript
+  registry: npm
+  url: https://www.npmjs.com/package/@satispay-authentication/core
+  official: false
+  version: 1.0.2
+  published: '2020-04-11'
+  note: >-
+    The npm scope reads as first-party but the package metadata points at github.com/bwlt/satispay-authentication-nodejs
+    and a non-Satispay maintainer, so it is recorded as community.
+summary:
+  official_count: 9
+  community_count: 3
+  languages_official:
+  - PHP
+  - Java
+  - Swift
+  registries_probed:
+  - packagist
+  - npm
+  - maven-central (no response within probe budget)
+  - github-releases

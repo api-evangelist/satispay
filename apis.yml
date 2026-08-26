@@ -1,23 +1,178 @@
 aid: satispay
 name: Satispay
-description: 'Satispay is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Satispay is an Italian mobile payment network and e-money institution, founded in 2013 and headquartered
+  in Milan, that lets consumers pay merchants directly from a bank account without card rails. For developers
+  it publishes the Satispay GBusiness API — an HTTPS/JSON payments API served from authservices.satispay.com
+  with a staging twin at staging.authservices.satispay.com — covering one-off payments (QR match-code, phone
+  match-user, HOTP), automatic/pre-authorized recurring payments, funds lock, refunds, consumer lookup,
+  shop profile, MQTT certificates for in-store devices, checkout sessions, daily closures and transaction
+  reports. Authentication is RSA request signing following the "Signing HTTP Messages" (Cavage) draft rather
+  than OAuth, POSTs accept an Idempotency-Key header, and payment status changes are delivered to a merchant
+  callback_url. Satispay also ships first-party e-commerce plugins (Shopify, Shopware, WooCommerce,
+  PrestaShop, Magento 2), a PHP SDK, and in-store Java and Swift SDKs.
+image: https://www.satispay.com/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/satispay/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
+- Payments
+- Mobile Payments
+- Fintech
+- E-Money
+- E-Commerce
+- Italy
+- Europe
+- Merchant Services
+- Recurring Payments
+- Refunds
+- Meal Vouchers
 - Company
-apis: []
+apis:
+- aid: satispay-gbusiness-api
+  name: Satispay GBusiness API
+  description: >-
+    The Satispay GBusiness API is the merchant-facing payments API. It creates and updates payments across the
+    MATCH_CODE, MATCH_USER, REFUND, PRE_AUTHORIZED, FUND_LOCK, PRE_AUTHORIZED_FUND_LOCK and HOTP_AUTH flows,
+    lists shop payments, exchanges an activation code for a KeyId, and creates transaction reports. Amounts are
+    integer cents, EUR only, and every request is signed with an RSA key pair.
+  humanURL: https://developers.satispay.com/reference/introduction
+  baseURL: https://authservices.satispay.com/g_business/v1
+  tags:
+  - Payments
+  - Refunds
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/satispay-gbusiness-api.json
+  - type: Documentation
+    url: https://developers.satispay.com/docs/welcome
+  - type: APIReference
+    url: https://developers.satispay.com/reference/introduction
+- aid: satispay-gbusiness-production
+  name: Satispay GBusiness API (production surface)
+  description: >-
+    The production-environment definition Satispay publishes alongside the payments API, covering consumer
+    lookup, daily closure retrieval, shop profile, pre-authorized payment tokens, MQTT certificates for
+    in-store devices, checkout sessions and their events, software version lookup, and the reports surface.
+  humanURL: https://developers.satispay.com/reference/endpoints
+  baseURL: https://authservices.satispay.com
+  tags:
+  - Payments
+  - Sessions
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/satispay-production.json
+  - type: APIReference
+    url: https://developers.satispay.com/reference/endpoints
+- aid: satispay-gbusiness-sandbox
+  name: Satispay GBusiness API (sandbox)
+  description: >-
+    The staging/sandbox definition Satispay publishes for verifying an RSA-signed request before going live.
+    It exposes the authentication test endpoint used to confirm the Digest, Message, Signature and
+    Authorization header have been composed correctly.
+  humanURL: https://developers.satispay.com/reference/testinput
+  baseURL: https://staging.authservices.satispay.com
+  tags:
+  - Sandbox
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/satispay-sandbox.json
+  - type: APIReference
+    url: https://developers.satispay.com/reference/testinput
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: VulnerabilityDisclosure
+  url: security/satispay-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/satispay-domain-security.yml
+- type: Authentication
+  url: authentication/satispay-authentication.yml
 - type: Website
-  url: https://www.hiive.com/securities/satispay-stock
+  url: https://www.satispay.com/it-it/business
+- type: DeveloperPortal
+  url: https://developers.satispay.com/docs/welcome
+- type: Documentation
+  url: https://developers.satispay.com/docs/welcome
+- type: APIReference
+  url: https://developers.satispay.com/reference/introduction
+- type: GettingStarted
+  url: https://developers.satispay.com/docs/getting-started
+- type: Support
+  url: https://support.satispay.com/en/business
+- type: Blog
+  url: https://www.satispay.com/it-it/blog/
+- type: GitHubOrganization
+  url: https://github.com/satispay
+- type: SignUp
+  url: https://dashboard.satispay.com
+- type: Pricing
+  url: https://www.satispay.com/it-it/business/costi/
+- type: TermsOfService
+  url: https://www.satispay.com/it-it/legal-hub/condizioni-generali/
+- type: PrivacyPolicy
+  url: https://www.satispay.com/it-it/legal-hub/privacy/
+- type: ChangeLog
+  url: https://developers.satispay.com/changelog
+- type: Packages
+  url: packages/satispay-packages.yml
+- type: SDKs
+  url: packages/satispay-packages.yml
+- type: WellKnown
+  url: well-known/satispay-well-known.yml
+- type: SecurityTxt
+  url: well-known/satispay-security.txt
+- type: Security
+  url: security/satispay-vulnerability-disclosure.yml
+- type: MCPServer
+  url: mcp/satispay-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/satispay-tool-crosswalk.yml
+- type: LLMsTxt
+  url: llms/satispay-llms.txt
+- type: Conformance
+  url: conformance/satispay-conformance.yml
+- type: ErrorCatalog
+  url: errors/satispay-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/satispay-lifecycle.yml
+- type: Conventions
+  url: conventions/satispay-conventions.yml
+- type: Idempotency
+  url: conventions/satispay-conventions.yml
+- type: Sandbox
+  url: sandbox/satispay-sandbox.yml
+- type: ChangeLog
+  url: changelog/satispay-changelog.yml
+- type: Components
+  url: components/satispay-components.yml
+- type: DataModel
+  url: data-model/satispay-data-model.yml
+- type: Webhooks
+  url: asyncapi/satispay-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Plans
+  url: plans/satispay-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/satispay-rate-limits.yml
+- type: Overlay
+  url: overlays/satispay-gbusiness-api-overlay.yaml
+- type: Overlay
+  url: overlays/satispay-production-overlay.yaml
+- type: Overlay
+  url: overlays/satispay-sandbox-overlay.yaml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 32
+  pass: local-v1

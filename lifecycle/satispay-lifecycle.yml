@@ -1,0 +1,63 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/changelog, https://developers.satispay.com/reference/handle-responses,
+  https://developers.satispay.com/reference/endpoints, https://satispay.statuspage.io/,
+  openapi/satispay-gbusiness-api.json
+versioning:
+  url_version: v1
+  url_pattern: https://authservices.satispay.com/g_business/v1/...
+  documentation_version: 1.8.7
+  scheme: >-
+    Two versions coexist and only one of them moves. The API path is pinned at v1 and has not changed.
+    The number that changes is the documentation/changelog version — 1.7.x through 1.8.x — which tracks
+    additive fields and new endpoints. A caller cannot request a specific documentation version; there is
+    no version header and no version query parameter, so every client is always on latest.
+  changelog: changelog/satispay-changelog.yml
+compatibility_policy:
+  documented: true
+  docs: https://developers.satispay.com/reference/handle-responses
+  statement: >-
+    "All API listed in this documentation that have a Json response can have one or more fields. A correct
+    integration will ignore all unknown fields as they can be added in the future. If there will be the
+    need to remove any of the fields from the API response we'll create a new version so that we guarantee
+    full backward compatibility."
+  obligations_on_client:
+  - Tolerate unknown response fields — new fields are added without notice.
+  guarantees_from_provider:
+  - Field removal requires a new version.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: >-
+    Satispay publishes no deprecation policy, no notice period, and no RFC 8594 Sunset/Deprecation headers,
+    and no operation in any of the three published specs is marked deprecated. The one deprecation signal
+    in the surface is in-band: the create-payment request body describes pre_authorized_payments_token as
+    "replaced with the new token parameter", and the archived repositories
+    satispay/online-api-php-sdk, satispay/in-store-api-java-client, satispay/opencart-plugin and
+    satispay/virtuemart-plugin are retired integrations. None of that is a policy.
+status_page:
+  published: false
+  probed:
+  - url: https://status.satispay.com/
+    status: 000
+    detail: DNS does not resolve.
+  - url: https://satispay.statuspage.io/
+    status: 200
+    detail: >-
+      Redirects to /inactive — a Statuspage account exists but is not active, so there is no operational
+      status surface. No StatusPage pointer is emitted on the strength of an inactive page.
+sla:
+  published: false
+  note: No uptime or latency SLA is published on the developer portal.
+support:
+  developer_contact: tech@satispay.com
+  merchant_support: https://support.satispay.com/en/business
+  security_contact: security@satispay.com
+release_cadence:
+  observed: >-
+    Ten documentation releases are listed from 1.7.2 to 1.8.7. Satispay does not date them on the
+    changelog entries themselves, so cadence cannot be measured from the published surface.

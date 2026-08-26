@@ -1,0 +1,158 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/satispay-gbusiness-api.json, openapi/satispay-production.json (4xx response schemas),
+  enriched from https://developers.satispay.com/reference/handle-errors
+format: custom
+rfc9457: false
+note: >-
+  Satispay does not use application/problem+json. Every non-2xx response is a plain JSON object carrying a
+  numeric system error code, a human message and a wlt trace string. The codes below are extracted verbatim
+  from the code-field descriptions in the published OpenAPI 4xx responses — Satispay publishes no separate
+  consolidated error-code reference page, so this file is that consolidation.
+envelope:
+  content_type: application/json
+  fields:
+    code:
+      type: string
+      description: The Satispay system error code (numeric, serialised as a string).
+    message:
+      type: string
+      description: The human-readable error message.
+    wlt:
+      type: string
+      description: >-
+        The request CID/WLT. Satispay asks integrators to store it because it is what their support uses
+        to trace the request.
+  example_shape: '{"code": "41", "message": "Resource not found", "wlt": "3YHX6r13"}'
+retry_policy:
+  docs: https://developers.satispay.com/reference/handle-errors
+  guidance: >-
+    Satispay requires a retry policy for every non-2xx response and names 500 Internal Server Error,
+    502 Bad Gateway and 503 Service Temporarily Unavailable explicitly. Retries must carry the same
+    Idempotency-Key so the operation is not performed twice.
+problem_types:
+- code: '21'
+  http_status: 400
+  title: Insufficient availability
+  category: funding
+  retryable: false
+  remediation: The consumer's wallet cannot fund the amount. Ask the consumer to top up or use another method.
+- code: '27'
+  http_status: 400
+  title: Payment not allowed
+  category: eligibility
+  detail: The consumer or the shop is currently not able to pay or receive payments.
+  retryable: maybe
+  remediation: >-
+    Satispay states this condition may be temporary, so a later retry can succeed, but the API gives no
+    signal of when. Do not treat it as permanent and do not hot-loop on it.
+- code: '34'
+  http_status: 400
+  title: Invalid public_key
+  category: authentication
+  operation: keyid
+  detail: The public_key sent to the KeyId exchange is invalid.
+  retryable: false
+  remediation: Re-check the PEM formatting of the RSA public key.
+- code: '34'
+  http_status: 401
+  title: Merchant not found or unauthorized
+  category: authentication
+  retryable: false
+  remediation: >-
+    The signature verified but the merchant behind the KeyId is unknown or not entitled. Confirm the
+    KeyId belongs to the environment being called — a staging KeyId used against production lands here.
+- code: '36'
+  http_status: 400
+  title: Malformed request
+  category: validation
+  detail: >-
+    Reported as "Malformed flow, payment or metadata" on the payment operations and as
+    "Invalid query parament status" on the list operation.
+  retryable: false
+- code: '41'
+  http_status: 404
+  title: Resource not found
+  category: not_found
+  detail: >-
+    Also returned by the KeyId exchange when the activation token does not exist in the environment being
+    called, which is Satispay's own documented sandbox-versus-production mix-up.
+  retryable: false
+  remediation: Verify the resource id, and verify you are calling the right base URL.
+- code: '44'
+  http_status: 403
+  title: Illegal state transition
+  category: conflict
+  detail: >-
+    Raised when cancelling a payment already in CANCELED status, or accepting one already in ACCEPTED
+    status.
+  retryable: false
+  remediation: >-
+    Read the current payment status with get-the-details-of-a-payment before acting again. For a write
+    whose outcome is unknown, use action=CANCEL_OR_REFUND rather than guessing.
+- code: '45'
+  http_status: 403
+  title: Unable to fulfill the request
+  category: conflict
+  detail: >-
+    On the KeyId exchange this specifically means the activation token has already been paired —
+    activation codes are single use.
+  retryable: false
+- code: '70'
+  http_status: 403
+  title: Anti-hammering violation
+  category: rate_limit
+  retryable: true
+  remediation: >-
+    This is Satispay's rate-limit signal. No Retry-After or RateLimit-* header accompanies it and no
+    threshold is published, so back off exponentially. See rate-limits/satispay-rate-limits.yml.
+- code: '131'
+  http_status: 400
+  title: Payment too old to be refunded
+  category: reversibility
+  detail: >-
+    The refund window for the funding instrument has closed — end of month for Meal Voucher and Fringe
+    Benefit payments, 365 days for e-money.
+  retryable: false
+  remediation: See the reversibility block in conventions/satispay-conventions.yml for the windows.
+- code: '172'
+  http_status: 400
+  title: Pre-authorized payment token is not valid
+  category: authorization
+  retryable: false
+  remediation: >-
+    The recurring-payment authorization has been revoked or expired. Re-obtain an authorization; a
+    callback_url on create-authorization is how Satispay tells you it was cancelled.
+- code: '189'
+  http_status: 400
+  title: Invalid report payload
+  category: validation
+  operation: create-new-report
+- code: '190'
+  http_status: 400
+  title: Invalid query type
+  category: validation
+  operation: create-new-report
+- code: '244'
+  http_status: 400
+  title: Invalid report merchant id
+  category: validation
+  operation: create-new-report
+- code: '246'
+  http_status: 400
+  title: The HOTP token is not valid
+  category: authorization
+  detail: Raised on the HOTP_AUTH payment flow when the one-time token does not verify.
+  retryable: false
+summary:
+  code_count: 15
+  http_statuses:
+  - 400
+  - 401
+  - 403
+  - 404
+  decline_codes_note: >-
+    Satispay publishes no card-style decline-code reference — it is not a card acquirer, it debits an
+    e-money wallet or a linked account. Codes 21 (insufficient availability) and 27 (payment not allowed)
+    are the decline-equivalent semantics and are carried here rather than in a separate decline-codes file.

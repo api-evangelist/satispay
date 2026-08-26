@@ -1,0 +1,242 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/satispay-gbusiness-api.json, openapi/satispay-production.json,
+  enriched from https://developers.satispay.com/reference/conventions and
+  https://developers.satispay.com/reference/external-code
+note: >-
+  The published specs declare no components.schemas — every request and response body is inlined per
+  operation, so there is no $ref graph to walk. This model is reconstructed from the inline object
+  properties and the id-reference fields that link them.
+conventions:
+  ids: opaque strings, no type prefix
+  money: integer minor units in amount_unit; EUR only
+  timestamps: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+entities:
+- name: Payment
+  primary_operation: create-a-payment
+  id_field: id
+  fields:
+  - name: id
+    type: string
+  - name: code_identifier
+    type: string
+    note: The Dynamic Code rendered as the QR the consumer scans.
+  - name: type
+    type: string
+  - name: flow
+    type: string
+    enum:
+    - MATCH_CODE
+    - MATCH_USER
+    - REFUND
+    - PRE_AUTHORIZED
+    - FUND_LOCK
+    - PRE_AUTHORIZED_FUND_LOCK
+    - HOTP_AUTH
+  - name: status
+    type: string
+    observed_values:
+    - PENDING
+    - ACCEPTED
+    - CANCELED
+    - AUTHORIZED
+    note: >-
+      ACCEPTED, PENDING and CANCELED are the values the list filter accepts; AUTHORIZED appears in the
+      update-payment action semantics. The spec does not declare a single closed status enum on the
+      response object.
+  - name: amount_unit
+    type: integer
+    note: Cents. 1240 means EUR 12.40.
+  - name: currency
+    type: string
+    enum:
+    - EUR
+  - name: expired
+    type: boolean
+  - name: insert_date
+    type: string
+  - name: expire_date
+    type: string
+  - name: description
+    type: string
+  - name: external_code
+    type: string
+    note: The merchant's own order id. Appears in the Dashboard export and is shown to the consumer.
+  - name: metadata
+    type: object
+    limit: up to 20 key-value pairs
+  - name: redirect_url
+    type: string
+  - name: sender
+    type: object
+  - name: receiver
+    type: object
+  operations:
+  - create-a-payment
+  - get-the-details-of-a-payment
+  - update-a-payment
+  - get-list-of-payments
+  - mv-create-payment
+  - mv-get-payment-details
+  - mv-update-payment
+  - fringe-create-payment
+  - fringe-get-payment-details
+  - fringe-update-payment
+- name: Actor
+  note: >-
+    The sender and receiver objects on a payment. Not addressable by its own endpoint — it exists only
+    embedded in a Payment.
+  embedded_in: Payment
+- name: Consumer
+  primary_operation: retrive-consumer
+  id_field: id
+  lookup_key: phone_number
+  note: >-
+    Looked up by phone number to obtain the consumer_uid required by the MATCH_USER flow. This is the
+    only PII-keyed lookup in the surface.
+  operations:
+  - retrive-consumer
+- name: PreAuthorizedPaymentToken
+  alias: Authorization
+  primary_operation: create-authorization
+  id_field: id
+  fields:
+  - name: reason
+    type: string
+  - name: status
+    type: string
+  - name: consumer_uid
+    type: string
+  - name: callback_url
+    type: string
+  - name: redirect_url
+    type: string
+  - name: metadata
+    type: object
+  operations:
+  - create-authorization
+  - get-authorization
+  - update-authorization
+- name: Shop
+  alias: Profile
+  primary_operation: retrieve-shop-profile
+  note: The authenticated merchant shop behind the KeyId; addressed as /profile/me, not by id.
+  operations:
+  - retrieve-shop-profile
+- name: Session
+  primary_operation: open-session
+  id_field: id
+  note: >-
+    An in-store checkout session opened against a funds lock, then driven by events (charges and
+    releases) and closed with an action.
+  operations:
+  - open-session
+  - get-session-details
+  - update-session
+- name: SessionEvent
+  primary_operation: create-session-event
+  fields:
+  - name: operation
+    type: string
+  - name: amount_unit
+    type: string
+  - name: currency
+    type: string
+  parent: Session
+- name: Report
+  primary_operation: create-new-report
+  id_field: report_id
+  note: >-
+    Asynchronous transaction reporting. Created, then listed and retrieved. As of documentation version
+    1.8.7 the columns are configurable.
+  operations:
+  - create-new-report
+  - get-list-of-reports
+  - retrieve-a-report
+- name: DailyClosure
+  primary_operation: retrieve-daily-closure
+  lookup_key: daily_closure_date
+  note: Addressed by date rather than by an id.
+  operations:
+  - retrieve-daily-closure
+- name: AuthenticationKey
+  primary_operation: keyid
+  id_field: key_id
+  note: >-
+    The credential entity. Created once by exchanging a single-use activation code plus an RSA public
+    key. There is no read, rotate or revoke operation.
+  operations:
+  - keyid
+- name: MqttCertificate
+  primary_operation: create-mqtt-certificates
+  note: Device certificates for in-store hardware subscribing to the MQTT topic surface.
+  operations:
+  - create-mqtt-certificates
+relationships:
+- from: Payment
+  to: Payment
+  type: belongs_to
+  via: parent_payment_uid
+  note: >-
+    The refund relationship. A REFUND-flow payment points at the payment it reverses, so refunds form a
+    self-referencing tree on the Payment entity rather than a separate Refund entity. There is no
+    dedicated refund endpoint anywhere in the surface.
+- from: Payment
+  to: Consumer
+  type: belongs_to
+  via: consumer_uid
+  note: Required by the MATCH_USER flow; obtained from retrive-consumer.
+- from: Payment
+  to: PreAuthorizedPaymentToken
+  type: belongs_to
+  via: token
+  note: >-
+    Set on PRE_AUTHORIZED and PRE_AUTHORIZED_FUND_LOCK flows. The older
+    pre_authorized_payments_token field is described in the spec as replaced by token.
+- from: PreAuthorizedPaymentToken
+  to: Consumer
+  type: belongs_to
+  via: consumer_uid
+- from: PreAuthorizedPaymentToken
+  to: Payment
+  type: has_many
+  via: token
+  note: One authorization funds many recurring payments — the reason revoking it is the real kill switch.
+- from: Session
+  to: Payment
+  type: belongs_to
+  via: fund_lock_uid
+  note: A session is opened against a FUND_LOCK-flow payment.
+- from: SessionEvent
+  to: Session
+  type: belongs_to
+  via: path parameter id
+- from: Payment
+  to: Shop
+  type: belongs_to
+  via: implicit — the authenticated KeyId
+  note: >-
+    Tenancy is carried by the credential, not by a field. There is no shop_id parameter on any payment
+    operation, so a KeyId is scoped to exactly one shop.
+- from: Report
+  to: Shop
+  type: belongs_to
+  via: implicit — the authenticated KeyId
+  note: A merchant id is validated server-side; supplying a wrong one returns error code 244.
+external_identifiers:
+  external_code:
+    owner: merchant
+    purpose: reconciliation key carried through to the Dashboard payments export and shown in the app
+    docs: https://developers.satispay.com/reference/external-code
+  idempotency_key:
+    owner: merchant
+    purpose: request de-duplication, not an entity identifier
+summary:
+  entities: 11
+  relationships: 9
+  components_schemas_declared: 0
+  note: >-
+    Zero declared component schemas across three specs is the most consequential structural gap here:
+    the same Payment object is redefined inline eleven times across the payment, meal-voucher and
+    fringe-benefit operation variants, so nothing guarantees those definitions stay in step.

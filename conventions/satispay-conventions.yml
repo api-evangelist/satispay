@@ -1,0 +1,222 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/reference/conventions,
+  https://developers.satispay.com/reference/making-requests,
+  https://developers.satispay.com/reference/idempotency,
+  https://developers.satispay.com/reference/handle-responses,
+  https://developers.satispay.com/reference/handle-errors,
+  https://developers.satispay.com/reference/endpoints,
+  https://developers.satispay.com/reference/external-code,
+  https://developers.satispay.com/reference/refund,
+  openapi/satispay-gbusiness-api.json
+transport:
+  protocol: HTTPS only
+  tls: TLS 1.2 or higher required since May 2023
+  base_url_production: https://authservices.satispay.com/
+  base_url_sandbox: https://staging.authservices.satispay.com/
+  api_path_prefix: /g_business/v1
+  request_headers:
+    Accept: application/json (required on all requests)
+    Content-Type: application/json (required on POST and PUT)
+  firewall:
+    port: 443
+    fqdn:
+    - authservices.satispay.com
+    - staging.authservices.satispay.com
+    - aws.amazonaws.com
+    docs: https://developers.satispay.com/reference/firewall-configuration
+auth_style:
+  model: RSA HTTP message signatures (Cavage draft-10) in the Authorization header
+  detail: see authentication/satispay-authentication.yml
+  oauth: false
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  scope: POST requests
+  key_format: caller-chosen; Satispay recommends random strings or UUIDs
+  replay_behavior: >-
+    The same response is returned for any request repeated with the same key, so a create-payment retried
+    after a network failure cannot create a second charge.
+  retention: not documented
+  docs: https://developers.satispay.com/reference/idempotency
+  note: >-
+    Satispay documents no retention window for an idempotency key and states no behaviour for a key reused
+    with a different body. Both are gaps an agent has to treat conservatively.
+pagination:
+  style: cursor
+  params:
+  - name: limit
+    in: query
+    description: Number of payments returned in the page.
+  - name: starting_after
+    in: query
+    description: The id of the last payment from the previous page.
+  - name: starting_after_timestamp
+    in: query
+    description: Milliseconds timestamp to start listing payments from.
+  response_fields:
+  - has_more
+  - data
+  applies_to:
+  - get-list-of-payments
+  filters:
+    status:
+    - ACCEPTED
+    - PENDING
+    - CANCELED
+  docs: https://developers.satispay.com/reference/get-list-of-payments
+  note: >-
+    Cursor pagination on the id of the last item, with a has_more flag in the envelope. The docs publish
+    no maximum or default page size, so an agent cannot tell what limit is safe to ask for.
+data_conventions:
+  dates:
+    format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+    example: '2016-02-11T11:20:49.000Z'
+    docs: https://developers.satispay.com/reference/conventions
+  money:
+    representation: integer minor units (Long), no decimal separator
+    example: 150 means EUR 1.50
+    field: amount_unit
+    currency: EUR only
+    docs: https://developers.satispay.com/reference/conventions
+  metadata:
+    field: metadata
+    limits: up to 20 key-value pairs on a payment
+  correlation:
+    field: external_code
+    purpose: >-
+      The merchant's own order id or payment identifier. It appears in the Dashboard payments export for
+      reconciliation and is shown to the end user in the Satispay app.
+    docs: https://developers.satispay.com/reference/external-code
+field_expansion:
+  supported: false
+  note: No expand / sparse-fieldset parameter is documented.
+request_id_tracing:
+  field: wlt
+  location: error response body
+  purpose: >-
+    Every non-2xx response carries a wlt (CID/WLT) string. Satispay asks integrators to keep it because it
+    is what their support uses to trace the request. There is no documented request-id response header on
+    success responses, so the trace identifier is only available on failure.
+versioning:
+  api_path_version: v1
+  documentation_version: 1.8.7
+  scheme: >-
+    The API path is pinned at v1. What actually moves is the documentation/changelog version (1.7.x, 1.8.x),
+    which tracks additive field and endpoint changes rather than a new URL version.
+  backward_compatibility: >-
+    Satispay states that a correct integration must ignore unknown response fields because fields can be
+    added at any time, and that removing a field would require a new version so that full backward
+    compatibility is guaranteed.
+  docs: https://developers.satispay.com/reference/handle-responses
+error_envelope:
+  format: custom JSON (not RFC 9457 / problem+json)
+  content_type: application/json
+  shape:
+    code: numeric Satispay system error code, serialised as a string
+    message: human-readable error message
+    wlt: request trace identifier
+  catalog: errors/satispay-problem-types.yml
+  retry_guidance: >-
+    Satispay requires a retry policy for any non-2xx response — 500, 502 and 503 are named explicitly —
+    and directs integrators to idempotency keys so retries cannot double-charge.
+  docs: https://developers.satispay.com/reference/handle-errors
+rate_limit_signaling:
+  headers: none documented
+  exhaustion_signal: 'HTTP 403 with error code 70, "Anti-hammering violation"'
+  detail: see rate-limits/satispay-rate-limits.yml
+callbacks:
+  style: merchant-supplied callback_url receiving a bare GET
+  detail: see asyncapi/satispay-webhooks.yml
+reversibility:
+  grade: verified
+  summary: >-
+    Satispay's write surface is payments, and every payment can be reversed by creating a new payment with
+    the REFUND flow. The refund windows are published explicitly and differ by funding instrument, which is
+    what lifts this from documented to verified.
+  write_surfaces:
+  - operation: create-a-payment
+    method: POST
+    path: /g_business/v1/payments
+    creates: payment
+    reversal:
+      operation: create-a-payment
+      mechanism: >-
+        Create a new payment with flow=REFUND, parent_payment_uid set to the payment being reversed and
+        amount_unit set to the amount to return. There is no DELETE and no dedicated refund endpoint —
+        a refund is itself a payment.
+      partial: true
+      windows:
+      - instrument: e-money
+        window: within 365 days of the payment creation date
+        partial_allowed: true
+        note: Multiple partial refunds are allowed up to the total amount of the original payment.
+        docs: https://developers.satispay.com/reference/refund
+      - instrument: meal vouchers
+        window: within the same month as the payment creation
+        partial_allowed: false
+        note: Only a full-amount refund is possible; partial refunds are not available.
+        docs: https://developers.satispay.com/reference/refund
+      - instrument: fringe benefits
+        window: within the same month as the payment creation
+        partial_allowed: true
+        docs: https://developers.satispay.com/reference/refund
+      out_of_window_error: 'HTTP 400 with error code 131, "Payment too old to be refunded"'
+  - operation: update-a-payment
+    method: PUT
+    path: /g_business/v1/payments/{id}
+    reversal:
+      mechanism: >-
+        PUT the payment with an action. CANCEL cancels a payment in PENDING or AUTHORIZED status.
+        CANCEL_OR_REFUND cancels a PENDING or AUTHORIZED payment, or refunds one already in ACCEPTED
+        status — Satispay recommends it precisely for the case where the caller does not know the real
+        state because it timed out or got an HTTP 500. ACCEPT captures a PENDING or AUTHORIZED payment,
+        optionally for a smaller amount_unit than was locked.
+      actions:
+      - ACCEPT
+      - CANCEL
+      - CANCEL_OR_REFUND
+      window: >-
+        CANCEL works while the payment is PENDING or AUTHORIZED. Once it is ACCEPTED, only
+        CANCEL_OR_REFUND or a REFUND-flow payment will reverse it. Attempting to cancel an already
+        CANCELED payment, or accept an already ACCEPTED one, returns HTTP 403 error code 44,
+        "Illegal state transition".
+      agent_note: >-
+        CANCEL_OR_REFUND is the recovery primitive for an uncertain write. An agent that times out on a
+        create or accept should call it rather than retrying blind, and read the returned status to learn
+        which outcome it got.
+      docs: https://developers.satispay.com/reference/update-a-payment
+  - operation: create-authorization
+    method: POST
+    path: /g_business/v1/pre_authorized_payment_tokens
+    creates: pre-authorized payment token
+    reversal:
+      operation: update-authorization
+      mechanism: >-
+        PUT /g_business/v1/pre_authorized_payment_tokens/{id} with the status body field to revoke the
+        recurring-payment authorization.
+      window: >-
+        Any time while the authorization is active. Satispay's callback documentation states the consumer
+        can also cancel their authorization from the Satispay app, which is why the docs recommend a
+        callback_url on create-authorization to learn about it.
+      docs: https://developers.satispay.com/reference/update-authorization
+  not_reversible:
+  - operation: keyid
+    note: >-
+      Exchanging an activation code for a KeyId is one-way. Activation codes are single use and the docs
+      publish no revoke or rotate endpoint, so a compromised key pair has to be handled through the
+      Dashboard and Satispay support rather than through the API.
+  - operation: create-new-report
+    note: A generated report cannot be deleted through the API; it simply expires.
+dry_run_mode:
+  supported: false
+  note: >-
+    There is no simulate/dry-run parameter. The rehearsal surface is the separate sandbox environment at
+    staging.authservices.satispay.com — see sandbox/satispay-sandbox.yml.
+cross_links:
+  errors: errors/satispay-problem-types.yml
+  lifecycle: lifecycle/satispay-lifecycle.yml
+  authentication: authentication/satispay-authentication.yml
+  rate_limits: rate-limits/satispay-rate-limits.yml
+  sandbox: sandbox/satispay-sandbox.yml

@@ -1,0 +1,259 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "sandbox",
+    "version": "1.7.1"
+  },
+  "servers": [
+    {
+      "url": "https://staging.authservices.satispay.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  },
+  "security": [
+    {
+      "sec0": []
+    }
+  ],
+  "paths": {
+    "/wally-services/protocol/tests/signature": {
+      "post": {
+        "summary": "Test the Authentication",
+        "description": "API to test your authentication. The API works with [GET|POST|PUT|DELETE|PATCH]",
+        "operationId": "testinput",
+        "parameters": [
+          {
+            "name": "Host",
+            "in": "header",
+            "description": "The host declared in the signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Date",
+            "in": "header",
+            "description": "The date declared in the signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Digest",
+            "in": "header",
+            "description": "The digest declared in the signature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Signature of the request",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Authentication success": {
+                    "value": "{\n  \"authentication_key\": {\n    \"access_key\": \"signature-test-66289\",\n    \"customer_uid\": \"00d25aa7-aa6e-4941-b8af-a18d4d9b8db3\",\n    \"key_type\": \"RSA_PUBLIC_KEY\",\n    \"auth_type\": \"SIGNATURE\",\n    \"role\": \"ONLINE_SHOP\",\n    \"enable\": true,\n    \"insert_date\": \"2017-11-28T15:04:50.000Z\",\n    \"version\": 1\n  },\n  \"signature\": {\n    \"key_id\": \"signature-test-66289\",\n    \"algorithm\": \"RSA_SHA256\",\n    \"headers\": [\n      \"(request-target)\",\n      \"host\",\n      \"date\",\n      \"digest\"\n    ],\n    \"signature\": \"C5yynRxJQG2VNdsH8yuGwgribKt1yzym8lYvTAwxFmjEf7akYgLeIGOkdZo5vE/oB7O7+kNgqHxPp9OKrs0XxGTBNNAOBPd0ELsptjuscWtF5dq/S4e8RjQvUcStJ6YOpwV/KyHwE1ovA1otrLpbxuUfqmNES65lRtYq6uuGinCJ+4mYnwrg9c6vuIJ/1b8VKi27PNpcJl4mwPg3hJ071T7Z2iolQRxDPN1ujQdKtUgudOIVLXiqQCPQKEaQQRvXkmh9fBH71fOsTPjvOP3q0XJp7tDPQF1K6MbF0RA6RehbuJ5nyBAOMWrk9r/+XrgC5zN3QmOtvrwmH2ko3du64A==\",\n    \"resign_required\": false,\n    \"iteration_count\": 2617,\n    \"valid\": true\n  },\n  \"signed_string\": \"(request-target): post /wally-services/protocol/tests/signature\\nhost: staging.authservices.satispay.com\\ndate: Mon, 18 Mar 2019 15:10:24 +0000\\ndigest: SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\"\n}"
+                  },
+                  "Authentication failed": {
+                    "value": "{\n  \"authentication_key\": {\n    \"role\": \"PUBLIC\"\n  },\n  \"signature\": {\n    \"key_id\": \"signature-test-66289\",\n    \"algorithm\": \"RSA_SHA256\",\n    \"headers\": [\n      \"(request-target)\",\n      \"host\",\n      \"date\",\n      \"digest\"\n    ],\n    \"signature\": \"mMpdBRIaU41kMKG61hOSqvtr4EucKxVHp0xMzyl+9Rk582G8xHzuaEHqs8a2JtNC7W2QWG+9NBcwN9e9LWXL2YLKY2Rbe4t7ERoAIcXBaeJ/TsW2iK9UAtZsFTtd5d5BTDIFbnYOP0VHUTkvSvoRyEGZn0toB0b14i1g4NvVI7CVN/ZeoK1u6E5UYjhA8la/6MllFjfxNzs9Odvk0WOlscQA19hXIE8XHMRoJrZuqLtorzwNsdx49x0suZUlh9od2KHCFzfjqotNUFo3nZ9y1X6wNnYTJWdeeA0qT3H/c7dcFsw3znE05nOzb5bzgEgsgw9w1b1TeJ3P3iRvZlsLBi9PyISy6qntgbfgFKdPm69F0idwtpqWESvYuI42mFUD3T/Qzq76UkI9Z+D+6qpw6gncrmTOoH+X9OVB9FnTWHOUexFTlFzwQ6sOMRG2eXKTT92P9+JNFxTDwpt0jsNP7Fc+PJ1A/LrbimHuGWQhV5LlUi2JTKC47DNkp+BJbz0h0AXniFdcEQh6xaqqEmsmX3Wbdx9b/RvuyfiN6bMAcTBpuJQ6FsNh0rm73FIicfKoP1CFymSNesQ8XUP6fLR2QCMJIxECV/Pr+XFb7uBSZEXi1LClIqEDFYxLkBuYONOWQYBOeYPlrf5ZPebMJ3ocLwF1j3irFsT9Nqp4PXN9JBw=\",\n    \"resign_required\": false,\n    \"iteration_count\": 2617,\n    \"valid\": true\n  },\n  \"signed_string\": \"(request-target): post /wally-services/protocol/tests/signature\\nhost: staging.authservices.satispay.con\\ndate: Mon, 18 Mar 2019 15:10:24 +0000\\ndigest: SHA-256=ZML76UQPYzw5yDTmhySnU1S8nmqGde/jhqOG5rpfVSI=\"\n}"
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "title": "Authentication success",
+                      "type": "object",
+                      "properties": {
+                        "authentication_key": {
+                          "type": "object",
+                          "properties": {
+                            "access_key": {
+                              "type": "string",
+                              "example": "signature-test-66289"
+                            },
+                            "customer_uid": {
+                              "type": "string",
+                              "example": "00d25aa7-aa6e-4941-b8af-a18d4d9b8db3"
+                            },
+                            "key_type": {
+                              "type": "string",
+                              "example": "RSA_PUBLIC_KEY"
+                            },
+                            "auth_type": {
+                              "type": "string",
+                              "example": "SIGNATURE"
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "ONLINE_SHOP"
+                            },
+                            "enable": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            },
+                            "insert_date": {
+                              "type": "string",
+                              "example": "2017-11-28T15:04:50.000Z"
+                            },
+                            "version": {
+                              "type": "integer",
+                              "example": 1,
+                              "default": 0
+                            }
+                          }
+                        },
+                        "signature": {
+                          "type": "object",
+                          "properties": {
+                            "key_id": {
+                              "type": "string",
+                              "example": "signature-test-66289"
+                            },
+                            "algorithm": {
+                              "type": "string",
+                              "example": "RSA_SHA256"
+                            },
+                            "headers": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "example": "(request-target)"
+                              }
+                            },
+                            "signature": {
+                              "type": "string",
+                              "example": "C5yynRxJQG2VNdsH8yuGwgribKt1yzym8lYvTAwxFmjEf7akYgLeIGOkdZo5vE/oB7O7+kNgqHxPp9OKrs0XxGTBNNAOBPd0ELsptjuscWtF5dq/S4e8RjQvUcStJ6YOpwV/KyHwE1ovA1otrLpbxuUfqmNES65lRtYq6uuGinCJ+4mYnwrg9c6vuIJ/1b8VKi27PNpcJl4mwPg3hJ071T7Z2iolQRxDPN1ujQdKtUgudOIVLXiqQCPQKEaQQRvXkmh9fBH71fOsTPjvOP3q0XJp7tDPQF1K6MbF0RA6RehbuJ5nyBAOMWrk9r/+XrgC5zN3QmOtvrwmH2ko3du64A=="
+                            },
+                            "resign_required": {
+                              "type": "boolean",
+                              "example": false,
+                              "default": true
+                            },
+                            "iteration_count": {
+                              "type": "integer",
+                              "example": 2617,
+                              "default": 0
+                            },
+                            "valid": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            }
+                          }
+                        },
+                        "signed_string": {
+                          "type": "string",
+                          "example": "(request-target): post /wally-services/protocol/tests/signature\nhost: staging.authservices.satispay.com\ndate: Mon, 18 Mar 2019 15:10:24 +0000\ndigest: SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+                        }
+                      }
+                    },
+                    {
+                      "title": "Authentication failed",
+                      "type": "object",
+                      "properties": {
+                        "authentication_key": {
+                          "type": "object",
+                          "properties": {
+                            "role": {
+                              "type": "string",
+                              "example": "PUBLIC"
+                            }
+                          }
+                        },
+                        "signature": {
+                          "type": "object",
+                          "properties": {
+                            "key_id": {
+                              "type": "string",
+                              "example": "signature-test-66289"
+                            },
+                            "algorithm": {
+                              "type": "string",
+                              "example": "RSA_SHA256"
+                            },
+                            "headers": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "example": "(request-target)"
+                              }
+                            },
+                            "signature": {
+                              "type": "string",
+                              "example": "mMpdBRIaU41kMKG61hOSqvtr4EucKxVHp0xMzyl+9Rk582G8xHzuaEHqs8a2JtNC7W2QWG+9NBcwN9e9LWXL2YLKY2Rbe4t7ERoAIcXBaeJ/TsW2iK9UAtZsFTtd5d5BTDIFbnYOP0VHUTkvSvoRyEGZn0toB0b14i1g4NvVI7CVN/ZeoK1u6E5UYjhA8la/6MllFjfxNzs9Odvk0WOlscQA19hXIE8XHMRoJrZuqLtorzwNsdx49x0suZUlh9od2KHCFzfjqotNUFo3nZ9y1X6wNnYTJWdeeA0qT3H/c7dcFsw3znE05nOzb5bzgEgsgw9w1b1TeJ3P3iRvZlsLBi9PyISy6qntgbfgFKdPm69F0idwtpqWESvYuI42mFUD3T/Qzq76UkI9Z+D+6qpw6gncrmTOoH+X9OVB9FnTWHOUexFTlFzwQ6sOMRG2eXKTT92P9+JNFxTDwpt0jsNP7Fc+PJ1A/LrbimHuGWQhV5LlUi2JTKC47DNkp+BJbz0h0AXniFdcEQh6xaqqEmsmX3Wbdx9b/RvuyfiN6bMAcTBpuJQ6FsNh0rm73FIicfKoP1CFymSNesQ8XUP6fLR2QCMJIxECV/Pr+XFb7uBSZEXi1LClIqEDFYxLkBuYONOWQYBOeYPlrf5ZPebMJ3ocLwF1j3irFsT9Nqp4PXN9JBw="
+                            },
+                            "resign_required": {
+                              "type": "boolean",
+                              "example": false,
+                              "default": true
+                            },
+                            "iteration_count": {
+                              "type": "integer",
+                              "example": 2617,
+                              "default": 0
+                            },
+                            "valid": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            }
+                          }
+                        },
+                        "signed_string": {
+                          "type": "string",
+                          "example": "(request-target): post /wally-services/protocol/tests/signature\nhost: staging.authservices.satispay.con\ndate: Mon, 18 Mar 2019 15:10:24 +0000\ndigest: SHA-256=ZML76UQPYzw5yDTmhySnU1S8nmqGde/jhqOG5rpfVSI="
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-readme": {
+          "code-samples": [
+            {
+              "language": "curl",
+              "code": "curl --request POST \\\n  --url https://staging.authservices.satispay.com/wally-services/protocol/tests/signature \\\n  --header 'content-type: application/json' \\  \n  --header 'host: staging.authservices.satispay.com' \\\n  --header 'date: Mon, 18 Mar 2019 15:10:24 +0000' \\\n  --header 'digest: SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=' \\\n  --header 'Authorization: Signature keyId=\"4ekqhmf7...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\",
+              "name": "cURL"
+            }
+          ],
+          "samples-languages": [
+            "curl"
+          ]
+        }
+      }
+    }
+  },
+  "x-readme": {
+    "headers": [],
+    "explorer-enabled": false,
+    "proxy-enabled": false
+  },
+  "x-readme-fauxas": true
+}

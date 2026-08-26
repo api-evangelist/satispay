@@ -1,0 +1,113 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/reference/introduction,
+  https://developers.satispay.com/reference/generate-rsa-keys,
+  https://developers.satispay.com/reference/keyid,
+  https://developers.satispay.com/reference/compose-the-authentication-header,
+  https://developers.satispay.com/reference/testinput, openapi/satispay-sandbox.json
+summary:
+  model: http-message-signatures
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  oauth2: false
+  openid_connect: false
+  mtls: false
+  note: >-
+    Satispay does not use OAuth. Every request to the GBusiness API is signed with an RSA private key
+    following the Signing HTTP Messages (Cavage) draft-10, and the signature travels in the standard
+    Authorization header. The OpenAPI declares this as a generic apiKey-in-header scheme (sec0), which
+    understates the real model — the header value is a computed signature, not a static key.
+schemes:
+- name: sec0
+  type: apiKey
+  in: header
+  parameter: Authorization
+  sources:
+  - openapi/satispay-sandbox.json
+  detail: >-
+    Authorization: Signature keyId="<KeyId>", algorithm="rsa-sha256",
+    headers="(request-target) host date digest", signature="<base64 RSA-SHA256 signature>"
+flow:
+  standard: https://tools.ietf.org/html/draft-cavage-http-signatures-10
+  standard_name: Signing HTTP Messages (Cavage/Sporny draft-10)
+  one_time_setup:
+  - step: 1
+    name: Generate an RSA key pair
+    docs: https://developers.satispay.com/reference/generate-rsa-keys
+  - step: 2
+    name: Exchange the activation code for a KeyId
+    docs: https://developers.satispay.com/reference/keyid
+    operation: keyid
+    endpoint: POST /g_business/v1/authentication_keys
+    request:
+      public_key: RSA public key in PEM format
+      token: the one-time activation code generated in the Satispay Business Dashboard
+    response:
+      key_id: opaque identifier used as the signature keyId for every later request
+    note: Activation codes are single use; re-pairing an already-paired token returns error code 45.
+  per_request:
+  - step: 3
+    name: Create the Digest of the body
+    docs: https://developers.satispay.com/reference/create-the-digest
+    header: 'Digest: SHA-256=<base64 sha256 of the raw body>'
+  - step: 4
+    name: Compose the Message (signing string)
+    docs: https://developers.satispay.com/reference/create-the-string
+    components:
+    - (request-target)
+    - host
+    - date
+    - digest
+  - step: 5
+    name: Sign the Message with the RSA private key
+    docs: https://developers.satispay.com/reference/sign-the-string
+    algorithm: rsa-sha256
+  - step: 6
+    name: Compose the Authorization header
+    docs: https://developers.satispay.com/reference/compose-the-authentication-header
+verification:
+  test_endpoint: POST https://staging.authservices.satispay.com/wally-services/protocol/tests/signature
+  operation: testinput
+  docs: https://developers.satispay.com/reference/testinput
+  note: The test endpoint accepts GET, POST, PUT, DELETE and PATCH and echoes whether the signature verified.
+credentials:
+  sandbox:
+    obtain: https://satispay-sandbox.paperform.co/
+    docs: https://developers.satispay.com/docs/credentials
+    note: A form request; Satispay emails the staging app links and the staging activation code.
+  production:
+    obtain: https://dashboard.satispay.com
+    docs: https://developers.satispay.com/docs/credentials
+    note: >-
+      Create a Satispay Business account, get the business profile verified, create a shop, then generate
+      the shop's activation code in the Dashboard and exchange it for a KeyId.
+callback_authentication:
+  docs: https://developers.satispay.com/reference/callback-s2s
+  digest: Every callback carries a Digest header with the SHA-256 of the body.
+  signature: >-
+    Callbacks MAY carry an Authorization header with an asymmetric signature over Digest and Date,
+    verifiable with Satispay's public key. Whether a given callback is signed depends on how the
+    integration is configured — Satispay's own docs say not all callbacks are signed.
+device_headers:
+  note: >-
+    The KeyId exchange accepts optional x-satispay-* device identification headers that are not
+    authentication but are recorded here because they travel with the credential exchange.
+  headers:
+  - x-satispay-deviceinfo
+  - x-satispay-devicetype
+  - x-satispay-os
+  - x-satispay-osv
+  - x-satispay-apph
+  - x-satispay-appn
+  - x-satispay-appv
+  - x-satispay-tracking-code
+  devicetype_enum:
+  - SMARTPHONE
+  - TABLET
+  - CASH REGISTER
+  - POS
+  - PC
+  - ECOMMERCE_PLUGIN

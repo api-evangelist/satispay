@@ -1,0 +1,65 @@
+# OpenAPI Overlay 1.0.0 — API Evangelist enhancements for Satispay
+# generated: '2026-08-26'
+# method: generated
+# source: openapi/satispay-production.json
+# This overlay is NOT applied to the original spec; it records the enhancements this
+# profile derives so the harvested definition stays verbatim.
+overlay: 1.0.0
+info:
+  title: Satispay production — API Evangelist enhancements
+  version: 1.0.0
+extends: satispay-production.json
+actions:
+- target: $.info
+  description: Record provenance and the contact surface Satispay publishes in its docs.
+  update:
+    x-apievangelist-source: https://developers.satispay.com/
+    x-apievangelist-harvested: '2026-08-26'
+    contact:
+      name: Satispay Tech
+      email: tech@satispay.com
+      url: https://developers.satispay.com/
+    termsOfService: https://www.satispay.com/it-it/legal-hub/
+- target: $.info
+  description: >-
+    Name the authentication model explicitly. The spec declares only a generic
+    apiKey-in-header scheme, which understates that the Authorization value is a computed
+    RSA signature over the request.
+  update:
+    x-authentication-model: cavage-http-signatures-draft-10
+    x-authentication-docs: https://developers.satispay.com/reference/introduction
+- target: $.paths.*.post
+  description: Declare the Idempotency-Key header Satispay documents but does not put in the spec.
+  update:
+    x-idempotency:
+      header: Idempotency-Key
+      docs: https://developers.satispay.com/reference/idempotency
+- target: $
+  description: >-
+    Record the error catalog and rate-limit signal derived from this spec's 4xx responses.
+  update:
+    x-error-catalog: errors/satispay-problem-types.yml
+    x-rate-limit-signal:
+      status: 403
+      code: '70'
+      message: Anti-hammering violation
+- target: $
+  description: Record the callback (webhook) surface, which the spec does not model at all.
+  update:
+    x-webhooks: asyncapi/satispay-webhooks.yml
+- target: $
+  description: >-
+    Record reversibility. Refunds are a payment flow rather than an endpoint, so the
+    reversal path is invisible in the paths object.
+  update:
+    x-reversibility:
+      mechanism: create-a-payment with flow=REFUND and parent_payment_uid
+      windows:
+        e_money: 365 days from payment creation
+        meal_vouchers: same month as payment creation, full amount only
+        fringe_benefits: same month as payment creation
+      docs: https://developers.satispay.com/reference/refund
+# Gaps this overlay records but deliberately does not patch (the original spec is left verbatim):
+#   operations: 14
+#   components.schemas declared: 0
+#   operations carrying tags: 0

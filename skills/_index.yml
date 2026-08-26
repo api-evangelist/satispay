@@ -1,0 +1,69 @@
+generated: '2026-08-26'
+method: generated
+source: >-
+  openapi/satispay-gbusiness-api.json, openapi/satispay-production.json, openapi/satispay-sandbox.json,
+  conventions/satispay-conventions.yml, errors/satispay-problem-types.yml,
+  asyncapi/satispay-webhooks.yml, https://developers.satispay.com/
+note: >-
+  Packaged Agent Skills for the Satispay GBusiness API. Every operationId referenced was verified against
+  the harvested specs; none is invented. Satispay publishes no AGENTS.md and no skills of its own — a
+  search of its documentation index and GitHub org found none — so these are generated, not harvested.
+api: Satispay GBusiness API
+base_url: https://authservices.satispay.com/g_business/v1
+sandbox_base_url: https://staging.authservices.satispay.com
+skills:
+- name: satispay-authenticate-and-sign
+  file: satispay-authenticate-and-sign.md
+  description: >-
+    Pair an RSA key to get a KeyId and sign every request with Cavage draft-10 HTTP signatures. Start here
+    — nothing else works without it.
+  operations:
+  - keyid
+  - testinput
+- name: satispay-accept-ecommerce-payment
+  file: satispay-accept-ecommerce-payment.md
+  description: >-
+    Take a one-off payment on a checkout and settle the outcome via the S2S callback rather than the
+    browser redirect.
+  operations:
+  - create-a-payment
+  - get-the-details-of-a-payment
+  - update-a-payment
+- name: satispay-refund-a-payment
+  file: satispay-refund-a-payment.md
+  description: >-
+    Reverse a settled payment. A refund is a REFUND-flow payment, not an endpoint, and the window depends
+    on the funding instrument.
+  operations:
+  - get-the-details-of-a-payment
+  - create-a-payment
+  - update-a-payment
+- name: satispay-recurring-payments
+  file: satispay-recurring-payments.md
+  description: >-
+    Obtain, charge against, and revoke a pre-authorized payment token for subscriptions and recurring
+    billing.
+  operations:
+  - create-authorization
+  - get-authorization
+  - update-authorization
+  - create-a-payment
+- name: satispay-reporting-and-reconciliation
+  file: satispay-reporting-and-reconciliation.md
+  description: >-
+    List payments, generate and retrieve reports, and read the daily closure, joined on your own
+    external_code.
+  operations:
+  - get-list-of-payments
+  - create-new-report
+  - get-list-of-reports
+  - retrieve-a-report
+  - retrieve-daily-closure
+  - retrieve-shop-profile
+shared_rules:
+  currency: EUR only; amount_unit is integer cents (1240 = EUR 12.40)
+  dates: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+  idempotency: Idempotency-Key header on every POST; carry the same key on every retry
+  errors: '{code, message, wlt} JSON — not RFC 9457. Keep wlt for support.'
+  rate_limit: HTTP 403 code 70 "Anti-hammering violation"; no Retry-After, back off exponentially
+  uncertain_writes: use PUT /payments/{id} action=CANCEL_OR_REFUND rather than retrying blind

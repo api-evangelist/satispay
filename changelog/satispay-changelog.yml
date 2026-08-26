@@ -1,0 +1,71 @@
+generated: '2026-08-26'
+method: searched
+source: https://developers.satispay.com/changelog
+docs: https://developers.satispay.com/changelog
+scheme: semver-ish documentation version (major.minor.patch), independent of the pinned v1 URL path
+current_version: 1.8.7
+dated: false
+note: >-
+  Satispay maintains a real dated-style changelog section on the developer portal, but the published
+  entries carry no date in their content, so no release dates are recorded below. Entries are listed
+  newest first exactly as the portal orders them. Every entry in the recent window is additive or
+  documentation-only; none announces a breaking change.
+entries:
+- version: 1.8.7
+  url: https://developers.satispay.com/changelog/changelog-187
+  breaking: false
+  additions:
+  - Custom columns for the report API.
+  highlights: Report generation became configurable rather than fixed-shape.
+- version: 1.8.6
+  url: https://developers.satispay.com/changelog/changelog-186
+  breaking: false
+  additions: []
+  highlights: Documentation improvement for the create key_id API call.
+- version: 1.8.5
+  url: https://developers.satispay.com/changelog/changelog-185
+  breaking: false
+  additions:
+  - API calls for PSPs.
+  highlights: >-
+    A payment-service-provider surface was added. A separate registration-api-for-psp definition is
+    listed among the portal's API files, consistent with this entry.
+- version: 1.8.4
+  url: https://developers.satispay.com/changelog/changelog-184
+  breaking: false
+  additions:
+  - Callback authentication process.
+  - PrestaShop compatibility from 1.7+.
+  highlights: >-
+    Callbacks gained an optional asymmetric signature merchants can verify with Satispay's public key.
+- version: 1.8.3
+  url: https://developers.satispay.com/changelog/changelog-183
+  breaking: false
+  additions:
+  - Retry policy for the callback flow.
+  highlights: Up to 3 retries at 1s, 2s and 4s on a non-2XX callback response.
+- version: 1.8.2
+  url: https://developers.satispay.com/changelog/182
+  breaking: false
+  additions:
+  - payment_options field on the payment GET response, for Buy Now Pay Later.
+- version: 1.8.1
+  url: https://developers.satispay.com/changelog/changelog-181
+  breaking: false
+  additions:
+  - New report columns covering Buy Now Pay Later product activation.
+- version: 1.8.0
+  url: https://developers.satispay.com/changelog/changelog-180
+  breaking: false
+  additions:
+  - New Transaction report columns for Meal Voucher and Fringe Benefit products, via SFTP and API.
+- version: 1.7.3
+  url: https://developers.satispay.com/changelog/changelog-173
+  breaking: false
+- version: 1.7.2
+  url: https://developers.satispay.com/changelog/changelog-172
+  breaking: false
+summary:
+  entries_recorded: 10
+  window: 1.7.2 through 1.8.7
+  breaking_changes: 0

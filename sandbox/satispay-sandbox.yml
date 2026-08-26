@@ -1,0 +1,70 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/docs/credentials, https://developers.satispay.com/docs/getting-started,
+  https://developers.satispay.com/reference/endpoints, https://developers.satispay.com/reference/testinput,
+  openapi/satispay-sandbox.json
+available: true
+model: separate staging environment with its own app, credentials and base URL
+environments:
+- name: sandbox
+  base_url: https://staging.authservices.satispay.com
+  api_prefix: /g_business/v1
+  spec: openapi/satispay-sandbox.json
+- name: production
+  base_url: https://authservices.satispay.com
+  api_prefix: /g_business/v1
+  spec: openapi/satispay-gbusiness-api.json
+access:
+  self_service: false
+  request_form: https://satispay-sandbox.paperform.co/
+  docs: https://developers.satispay.com/docs/credentials
+  requires:
+  - phone number
+  - email address
+  - the intended use case
+  returns:
+  - download links for the Satispay staging app plus login material
+  - the activation code used for API authentication in staging
+  note: >-
+    Sandbox is gated behind a human-reviewed form rather than instant provisioning, and Satispay asks for
+    real contact details because the same phone number and email are used to log in to the staging app.
+    An agent or a developer cannot obtain sandbox credentials programmatically.
+key_separation:
+  mechanism: environment-scoped activation code and KeyId
+  prefixes: none
+  note: >-
+    Satispay does not use test-mode versus live-mode key prefixes. Credentials are separated by which
+    environment issued them, and there is nothing in a KeyId that identifies its environment. Presenting
+    a staging KeyId to production returns HTTP 404 error code 41 — Satispay documents this specific
+    mix-up on the KeyId page and tells integrators to verify the endpoint.
+signature_test:
+  endpoint: POST https://staging.authservices.satispay.com/wally-services/protocol/tests/signature
+  operation: testinput
+  docs: https://developers.satispay.com/reference/testinput
+  methods:
+  - GET
+  - POST
+  - PUT
+  - DELETE
+  - PATCH
+  purpose: >-
+    Verify that the Digest, signing string, RSA signature and Authorization header are composed correctly
+    before calling any real endpoint. This is the one endpoint Satispay ships purely for integration
+    testing.
+test_data:
+  test_cards: n/a
+  note: >-
+    Satispay is not a card network, so there are no test card numbers. The test fixtures are the staging
+    consumer account and staging shop that Satispay provisions with the sandbox request, driven through
+    the staging Satispay app — payments are confirmed by tapping in the app, not by a magic value.
+  magic_values: none published
+time_simulation:
+  supported: false
+  note: >-
+    No test clock. This matters for this API specifically: the refund windows (365 days for e-money,
+    end-of-month for meal vouchers and fringe benefits) and payment expiration_date cannot be rehearsed —
+    an integrator cannot force a payment past its refund window in staging to test error code 131.
+fixtures_and_triggers:
+  supported: false
+  note: No fixture generator or event-trigger tooling is published.

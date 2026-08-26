@@ -1,0 +1,67 @@
+# Satispay Developers Documentation
+
+> Documentation for Satispay Developers
+
+Append .md to any documentation page URL to get its markdown version.
+
+## Guides
+- [Welcome](https://developers.satispay.com/docs/welcome.md)
+- [Overview of the integration process](https://developers.satispay.com/docs/getting-started.md): The steps below will guide you on how to integrate your platform with our APIs.
+- [Credentials](https://developers.satispay.com/docs/credentials.md)
+- [One-off - Phone number](https://developers.satispay.com/docs/payment-mobile-number.md): When the merchant wants to create a payment associated to the consumer's mobile phone number which will receive a push notification to confirm it.
+- [One-off - Web-button](https://developers.satispay.com/docs/web-button-pay.md): When the merchant wants to receive a payment by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Button that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the payment to complete it.
+- [One-off - Web-redirect](https://developers.satispay.com/docs/web-redirect-pay.md): When the merchant wants to receive a payment by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Redirect that is a solution that redirects the user to a Satispay web-page to complete the payment.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the payment to complete it.
+- [One-off - Mobile app](https://developers.satispay.com/docs/payment-mobile-app.md): When the consumer is completing the purchase on a mobile app
+- [One-off - HOTP](https://developers.satispay.com/docs/one-off-hotp.md)
+- [Automatic Payments  - Web-button](https://developers.satispay.com/docs/web-button-auth.md): When the merchant wants to obtain the authorization to execute recurring payments on a consumer by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Button that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the authorization.
+- [Automatic Payments  - Web-redirect](https://developers.satispay.com/docs/web-redirect-auth.md): When the merchant wants to obtain the authorization to execute recurring payments on a consumer by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Redirect that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the authorization.
+- [Automatic Payments - Mobile app](https://developers.satispay.com/docs/pre-authorization-mobile-app.md): When the merchant wants to obtain the authorisation to execute recurring payments on a mobile app
+- [Funds lock - Web-button](https://developers.satispay.com/docs/web-button-funds-lock.md): When the merchant wants to lock the funds for a payment by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Button that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the payment to complete it.
+- [Funds lock - Web-redirect](https://developers.satispay.com/docs/web-redirect-funds-lock.md): When the merchant wants to lock the funds for a payment by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Redirect that is a solution that redirects the user to a Satispay web-page to complete the payment.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the payment to complete it.
+- [Funds lock - Mobile app](https://developers.satispay.com/docs/funds-lock-mobile-app.md): When the consumer is completing the purchase on a mobile app
+- [Automatic funds lock - Web Button](https://developers.satispay.com/docs/pre-authorized-funds-lock-web-button.md): When the merchant wants to obtain the authorisation to execute recurring funds locks on a consumer by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Button that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the authorisation.
+- [Automatic funds lock - Web Redirect](https://developers.satispay.com/docs/automatic-funds-lock-web-redirect-copy.md): When the merchant wants to obtain the authorization to execute recurring funds locks on a consumer by displaying a QrCode or by letting the consumer type the mobile phone number on a screen. The interface to display the QrCode or the mobile phone number field is handled by the Web Redirect that is an embeddable JavaScript that loads the Satispay Payment option on your client.  The consumer can scan the Dynamic Code or type the mobile phone number and confirm the authorization.
+- [Automatic funds lock - Mobile app](https://developers.satispay.com/docs/pre-authorized-funds-lock-mobile-app.md): When the merchant wants to obtain the authorisation to execute recurring funds locks on a mobile app
+- [Official plugins](https://developers.satispay.com/docs/official-plugins.md)
+- [Shopify](https://developers.satispay.com/docs/shopify.md): Satispay app for Shopify e-commerce platform
+- [Shopware](https://developers.satispay.com/docs/shopware.md): Satispay plugin for Shopware e-commerce platform
+- [WooCommerce](https://developers.satispay.com/docs/woocommerce.md): Satispay plugin for WooCommerce e-commerce platform
+- [PrestaShop](https://developers.satispay.com/docs/prestashop.md): Satispay plugin for PrestaShop e-commerce platform
+- [Magento 2](https://developers.satispay.com/docs/magento-2.md): Satispay plugin for Magento 2 e-commerce platform
+- [Third-parties plugins](https://developers.satispay.com/docs/third-parties-plugins.md)
+
+## API Reference
+- [Callback S2S](https://developers.satispay.com/reference/callback-s2s.md)
+- [Logo & Brand Guidelines](https://developers.satispay.com/reference/logo.md)
+- [Introduction](https://developers.satispay.com/reference/introduction.md)
+- [1. Generate RSA key pair](https://developers.satispay.com/reference/generate-rsa-keys.md): This guide will help you generate the RSA key pair
+- [2. Obtain the KeyId](https://developers.satispay.com/reference/keyid.md)
+- [3. Create the Digest](https://developers.satispay.com/reference/create-the-digest.md)
+- [4. Create the Message](https://developers.satispay.com/reference/create-the-string.md): This is the String that will then be signed at the next step
+- [5. Create the Signature](https://developers.satispay.com/reference/sign-the-string.md): Signature is the signed String created at the previous step
+- [6. Compose the Authorization header](https://developers.satispay.com/reference/compose-the-authentication-header.md)
+- [Test the Authentication](https://developers.satispay.com/reference/testinput.md): API to test your authentication. The API works with [GET|POST|PUT|DELETE|PATCH]
+- [Create payment](https://developers.satispay.com/reference/create-a-payment.md)
+- [Get payment](https://developers.satispay.com/reference/get-the-details-of-a-payment.md)
+- [Update payment](https://developers.satispay.com/reference/update-a-payment.md)
+- [Get shop payments](https://developers.satispay.com/reference/get-list-of-payments.md)
+- [Refunds](https://developers.satispay.com/reference/refund.md)
+- [Create payment](https://developers.satispay.com/reference/mv-create-payment.md)
+- [Get payment](https://developers.satispay.com/reference/mv-get-payment-details.md)
+- [Update payment](https://developers.satispay.com/reference/mv-update-payment.md)
+- [Create payment](https://developers.satispay.com/reference/fringe-create-payment.md)
+- [Get payment](https://developers.satispay.com/reference/fringe-get-payment-details.md)
+- [Update payment](https://developers.satispay.com/reference/fringe-update-payment.md)
+- [Create new report](https://developers.satispay.com/reference/create-new-report.md)
+
+## Changelog
+- [Changelog - 1.8.7](https://developers.satispay.com/changelog/changelog-187.md)
+- [Changelog - 1.8.6](https://developers.satispay.com/changelog/changelog-186.md)
+- [Changelog - 1.8.5](https://developers.satispay.com/changelog/changelog-185.md)
+- [Changelog - 1.8.4](https://developers.satispay.com/changelog/changelog-184.md)
+- [Changelog - 1.8.3](https://developers.satispay.com/changelog/changelog-183.md)
+- [Changelog - 1.8.2](https://developers.satispay.com/changelog/182.md)
+- [Changelog - 1.8.1](https://developers.satispay.com/changelog/changelog-181.md)
+- [Changelog - 1.8.0](https://developers.satispay.com/changelog/changelog-180.md)
+- [Changelog - 1.7.3](https://developers.satispay.com/changelog/changelog-173.md)
+- [Changelog - 1.7.2](https://developers.satispay.com/changelog/changelog-172.md)

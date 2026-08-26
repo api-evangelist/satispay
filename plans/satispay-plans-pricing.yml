@@ -1,0 +1,59 @@
+generated: '2026-08-26'
+method: searched
+source: https://www.satispay.com/it-it/business/costi/
+plan_count: 2
+currency: EUR
+model: per-transaction commission, no subscription
+note: >-
+  Satispay Business has no API plans, no developer tiers and no metered API pricing — the API is free to
+  use and the commercial model is a commission on each accepted payment. Pricing is published in Italian
+  on the merchant costs page. Satispay announced a change effective September 2026, so both the current
+  and the incoming structure are recorded. There is no published enterprise/contact-sales developer tier.
+plans:
+- name: Satispay Business — standard merchant (until September 2026)
+  price: 1%
+  price_type: percentage-of-transaction
+  currency: EUR
+  billing_period: per-transaction
+  quota: unlimited
+  signup: https://dashboard.satispay.com
+  fees:
+    registration: 0
+    account_deposits: 0
+    cancellation: 0
+    monthly_subscription: 0
+  limits:
+    api_calls: not metered
+  note: Commission on the single payment, applied at physical points of sale and online.
+- name: Satispay Business — standard merchant (from September 2026)
+  price: 0.95%
+  price_type: percentage-of-transaction
+  currency: EUR
+  billing_period: per-transaction
+  quota: unlimited
+  free_threshold: transactions under EUR 10 are free
+  signup: https://dashboard.satispay.com
+  fees:
+    registration: 0
+    account_deposits: 0
+    cancellation: 0
+    monthly_subscription: 0
+  note: >-
+    From September 2026, transactions below EUR 10 carry no commission and transactions of EUR 10 or more
+    are charged 0.95%.
+special_rates:
+- segment: tobacconists and newsstands (physical points of sale only)
+  price: 0.5%
+  note: From September 2026 transactions under EUR 10 are free for this segment as well.
+- segment: meal vouchers, shopping vouchers, Paga in 3
+  note: >-
+    Satispay's own disclaimer states that specific value-added services (Buoni Pasto, Buoni Acquisto,
+    Paga in 3) may carry commissions. It does not publish those rates on the costs page, so no figure is
+    recorded here.
+api_pricing:
+  metered: false
+  developer_tiers: 0
+  sandbox_cost: 0
+  note: >-
+    Sandbox access is granted free through a request form. There is no API key price, no request quota,
+    and no overage — a developer pays only when a real payment settles.

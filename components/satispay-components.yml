@@ -1,0 +1,76 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/docs/web-button-pay, https://developers.satispay.com/docs/web-redirect-pay,
+  https://developers.satispay.com/docs/official-plugins, https://developers.satispay.com/llms.txt
+note: >-
+  Satispay ships two client-side checkout surfaces plus a set of first-party e-commerce plugins. Both
+  surfaces cover the same three payment intents — one-off payment, recurring-payment authorization, and
+  funds lock — which is why each appears three times in the documentation index.
+families:
+- family: Web Button
+  kind: embeddable JavaScript component
+  description: >-
+    An embeddable JavaScript that loads the Satispay payment option directly into the merchant's own
+    checkout page. It renders the QR code (Dynamic Code) or a mobile-number field; the consumer scans or
+    types their number and confirms in the Satispay app. The merchant keeps the checkout on their own page.
+  intents:
+  - name: one-off payment
+    docs: https://developers.satispay.com/docs/web-button-pay
+  - name: automatic-payments authorization
+    docs: https://developers.satispay.com/docs/web-button-auth
+  - name: funds lock
+    docs: https://developers.satispay.com/docs/web-button-funds-lock
+  - name: automatic funds lock
+    docs: https://developers.satispay.com/docs/pre-authorized-funds-lock-web-button
+  loader: JavaScript include published in the linked docs pages
+  version: null
+  note: >-
+    The loader script is documented per flow rather than published as a versioned package on npm or a
+    pinned CDN URL, so a consumer cannot pin a version of the Web Button.
+- family: Web Redirect
+  kind: hosted redirect surface
+  description: >-
+    Redirects the consumer to a Satispay-hosted web page that renders the QR code or mobile-number field
+    and handles confirmation, then returns to the merchant's redirect_url. The merchant hosts no payment
+    UI at all.
+  intents:
+  - name: one-off payment
+    docs: https://developers.satispay.com/docs/web-redirect-pay
+  - name: automatic-payments authorization
+    docs: https://developers.satispay.com/docs/web-redirect-auth
+  - name: funds lock
+    docs: https://developers.satispay.com/docs/web-redirect-funds-lock
+  - name: automatic funds lock
+    docs: https://developers.satispay.com/docs/automatic-funds-lock-web-redirect-copy
+  api_binding: The redirect_url body field on create-a-payment.
+- family: Mobile app flows
+  kind: native app-to-app handoff
+  description: >-
+    For purchases completing inside a merchant's own mobile app, the consumer is handed to the Satispay
+    app to confirm. Backed by the in-store Java and Swift SDKs in packages/.
+  intents:
+  - name: one-off payment
+    docs: https://developers.satispay.com/docs/payment-mobile-app
+  - name: automatic-payments authorization
+    docs: https://developers.satispay.com/docs/pre-authorization-mobile-app
+  - name: funds lock
+    docs: https://developers.satispay.com/docs/funds-lock-mobile-app
+  - name: automatic funds lock
+    docs: https://developers.satispay.com/docs/pre-authorized-funds-lock-mobile-app
+- family: E-commerce plugins
+  kind: platform plugin (not a component library)
+  description: Drop-in payment methods for hosted commerce platforms; see packages/ for versions.
+  members:
+  - Shopify
+  - Shopware
+  - WooCommerce
+  - PrestaShop
+  - Magento 2
+  docs: https://developers.satispay.com/docs/official-plugins
+  note: >-
+    Satispay's docs warn that firewall rules must allow authservices.satispay.com,
+    staging.authservices.satispay.com and *.amazonaws.com before the plugins will work.
+brand_assets:
+  docs: https://developers.satispay.com/reference/logo
+  press_kit: https://www.datocms-assets.com/133951/1785848311-satispay-stampa-e-media.zip

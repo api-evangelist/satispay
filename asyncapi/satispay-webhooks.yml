@@ -1,0 +1,81 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/reference/callback-s2s, openapi/satispay-gbusiness-api.json,
+  openapi/satispay-production.json
+asyncapi_spec: false
+note: >-
+  Satispay publishes no AsyncAPI document and no event catalog. What it does publish is a real
+  server-to-server callback surface, documented in detail on the "Callback S2S" page, so this file
+  captures the webhook contract rather than fabricating an AsyncAPI. The callback is deliberately
+  content-free: it tells the merchant that something changed and nothing more.
+transport:
+  style: HTTP GET to a merchant-supplied URL
+  method: GET
+  body: none
+  registration: >-
+    Per-transaction, not per-account. The callback_url is a body field on create-a-payment and
+    create-authorization; there is no webhook-registration endpoint, no subscription management API and
+    no event-type selection.
+  placeholder: >-
+    The literal string {uuid} inside the callback_url is substituted by Satispay with the payment id or
+    authorization id.
+  examples:
+  - 'https://example.com/satispay-callback?payment_id={uuid}'
+  - 'https://example.com/satispay-callback?authorization_id={uuid}'
+events:
+- name: payment.status_changed
+  trigger: Any change in the status of a payment created with a callback_url.
+  delivery: GET to the merchant callback_url with the payment id substituted for {uuid}.
+  payload: >-
+    None. Satispay explicitly warns that the notification carries no status value — not accepted, not
+    canceled, not pending. The merchant must call get-the-details-of-a-payment to learn the actual state.
+  follow_up_operation: get-the-details-of-a-payment
+  source_field: callback_url on create-a-payment
+- name: authorization.status_changed
+  trigger: >-
+    Any change in the status of a pre-authorized payment token, including the consumer revoking the
+    authorization from the Satispay app.
+  delivery: GET to the merchant callback_url with the authorization id substituted for {uuid}.
+  payload: None. Same content-free design as the payment callback.
+  follow_up_operation: get-authorization
+  source_field: callback_url on create-authorization
+delivery_semantics:
+  retry_policy:
+    attempts: 3
+    backoff_seconds:
+    - 1
+    - 2
+    - 4
+    trigger: any non-2XX response from the merchant endpoint
+    after_exhaustion: >-
+      Satispay stops retrying and recommends the merchant periodically poll payment status by API and
+      handle it against their own business logic.
+  ordering: not guaranteed / not documented
+  deduplication: not documented
+  concurrency_warning: >-
+    Satispay tells merchants to implement their own throttling on the callback endpoint, warning that
+    concurrent callback volume scales with the number of concurrent payments.
+security:
+  digest:
+    present: always
+    header: Digest
+    algorithm: SHA-256 of the request body
+    note: Present on every callback, usable for payload integrity.
+  signature:
+    present: conditional
+    header: Authorization
+    algorithm: asymmetric signature over a header set including Digest and Date
+    verification: Satispay's public key
+    caveat: >-
+      Satispay states plainly that not all callbacks carry an authentication signature — whether a given
+      callback is signed depends on how the integration is configured, and an integrator that needs
+      verification must ask Satispay to configure it. A receiver therefore cannot assume every inbound
+      callback is verifiable, which is the single sharpest edge in this surface.
+  added_in: documentation version 1.8.4
+integration_risk:
+  provider_statement: >-
+    Satispay's own docs warn that relying on the app's redirect back to the merchant site instead of the
+    callback leads to payment loss: a consumer can close the browser after scanning the QR code and still
+    confirm the payment in the app, so the payment succeeds while the merchant never creates the order.
+  implication: The callback is not optional for e-commerce integrations.

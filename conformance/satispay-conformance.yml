@@ -1,0 +1,182 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  openapi/satispay-gbusiness-api.json, openapi/satispay-production.json, openapi/satispay-sandbox.json,
+  https://developers.satispay.com/reference/introduction,
+  https://developers.satispay.com/reference/idempotency,
+  https://developers.satispay.com/reference/handle-errors,
+  https://developers.satispay.com/reference/get-list-of-payments,
+  https://www.satispay.com/.well-known/security.txt
+note: >-
+  Assertions are made against what the published contract and developer documentation actually declare,
+  not against what a payments company of this kind is presumed to do. Where a standard is plainly
+  relevant but the contract is silent, that is recorded as conforms:false with the reason, rather than
+  inferred from the business model.
+standards:
+- id: cavage-http-signatures
+  name: Signing HTTP Messages (Cavage/Sporny draft-10)
+  conforms: true
+  evidence:
+    docs: https://developers.satispay.com/reference/introduction
+    statement: >-
+      "Our authentication relies on the principles outlined in the Signing HTTP Messages draft, which is
+      part of the Web Payments initiative." The docs cite
+      https://tools.ietf.org/html/draft-cavage-http-signatures-10 by URL and walk the digest, signing
+      string, signature and Authorization header construction step by step.
+    headers:
+    - Authorization
+    - Digest
+    - Date
+    - Host
+    spec_location: >-
+      Declared as parameters on every operation in openapi/satispay-gbusiness-api.json and
+      openapi/satispay-production.json.
+  note: >-
+    This is a superseded draft. It was never published as an RFC and has been replaced by RFC 9421
+    (HTTP Message Signatures). Satispay conforms to the draft it names, but an integrator using an
+    RFC 9421 library will not interoperate without configuration.
+- id: rfc9421
+  name: HTTP Message Signatures
+  conforms: false
+  evidence:
+    reason: >-
+      The docs cite the Cavage draft-10 predecessor, not RFC 9421. No Signature-Input header, no
+      structured-fields signature parameters.
+- id: idempotency
+  name: Idempotent request retries via an Idempotency-Key header
+  conforms: true
+  evidence:
+    docs: https://developers.satispay.com/reference/idempotency
+    header: Idempotency-Key
+    scope: POST
+    statement: >-
+      "We'll always send back the same response for requests made with the same key." Satispay recommends
+      random strings or UUIDs.
+  gaps:
+  - No retention window is published.
+  - Behaviour on key reuse with a different request body is not documented.
+- id: draft-ietf-httpapi-idempotency-key-header
+  name: The Idempotency-Key HTTP Header Field (IETF draft)
+  conforms: partial
+  evidence:
+    reason: >-
+      The header name and semantics match the draft, but Satispay does not document the draft's error
+      behaviour for a mismatched or in-flight key and returns no idempotency-specific error code.
+- id: pagination
+  name: Cursor pagination
+  conforms: true
+  evidence:
+    docs: https://developers.satispay.com/reference/get-list-of-payments
+    parameters:
+    - limit
+    - starting_after
+    - starting_after_timestamp
+    response_fields:
+    - has_more
+    - data
+    spec_location: openapi/satispay-gbusiness-api.json, get-list-of-payments query parameters
+  gaps:
+  - No default or maximum page size is published.
+- id: rfc9457
+  name: Problem Details for HTTP APIs
+  conforms: false
+  evidence:
+    reason: >-
+      Errors are a custom JSON object of {code, message, wlt} served as application/json. No
+      application/problem+json media type and no type/title/status/detail/instance members appear in any
+      4xx response across the three published specs.
+    catalog: errors/satispay-problem-types.yml
+- id: rfc9116
+  name: security.txt
+  conforms: true
+  evidence:
+    url: https://www.satispay.com/.well-known/security.txt
+    http_status: 200
+    fields:
+    - Contact
+    - Expires
+    - Encryption
+    - Preferred-Languages
+    file: well-known/satispay-security.txt
+  gaps:
+  - No Policy field, so there is no linked disclosure policy.
+  - No Acknowledgments or Canonical field.
+- id: rfc8594
+  name: Sunset HTTP header
+  conforms: false
+  evidence:
+    reason: No Sunset or Deprecation headers are documented and no operation is marked deprecated.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence:
+    reason: >-
+      No oauth2 securityScheme in any published spec, no authorization or token endpoint, and
+      /.well-known/oauth-authorization-server 404s on every host. Authentication is RSA request signing.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence:
+    reason: /.well-known/openid-configuration returns 404 or a marketing redirect on every host probed.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence:
+    reason: >-
+      A real webhook surface exists (see asyncapi/satispay-webhooks.yml) but no AsyncAPI document is
+      published and there is no event catalog, subscription API or typed event payload — the callback
+      carries no body at all.
+- id: openapi
+  name: OpenAPI
+  conforms: true
+  version: 3.1.0
+  evidence:
+    files:
+    - openapi/satispay-gbusiness-api.json
+    - openapi/satispay-production.json
+    - openapi/satispay-sandbox.json
+    note: >-
+      Satispay authors its reference in OpenAPI 3.1.0 and serves it from its own developer portal, but
+      does not expose a download URL — the definitions are embedded in the documentation pages rather
+      than published at a stable spec endpoint.
+  gaps:
+  - components.schemas is empty in all three definitions; every body is inlined per operation.
+  - No securitySchemes are declared on the production definition.
+  - No tags are declared on any operation.
+domain_standards:
+  regime: payments
+  regime_standards_probed:
+  - pci-dss
+  - 3-d-secure
+  - iso-20022
+  - confirmation-of-payee
+  - emv
+  - psd2-sca
+  - open-payments
+  declared_in_contract: false
+  detail: >-
+    None of the payments-domain standards is declared anywhere in the contract. There is no ISO 20022
+    message type, no EMV or 3-D Secure artefact, no Open Payments resource shape, and no SCA-specific
+    parameter, exemption field or challenge response object in any of the 27 published operations. This
+    is coherent with the product rather than a defect: Satispay does not run on card rails, so EMV,
+    3-D Secure and card decline codes have no place in it, and consumer authentication happens inside
+    the Satispay app rather than through an API-visible SCA challenge the merchant orchestrates. The
+    closest thing in the contract is the HOTP_AUTH payment flow and its error code 246
+    ("The HOTP token is not valid"), which is a one-time-password authorisation mechanism but is
+    Satispay-specific and cites no standard.
+  award: none
+  note: >-
+    Recorded as not-declared rather than non-conformant. Domain-standard conformance is reward-only, and
+    nothing here is invented to fill the slot.
+compliance:
+  certifications_published: false
+  trust_center: false
+  probed:
+  - url: https://trust.satispay.com/
+    status: 000
+    detail: DNS does not resolve.
+  legal_hub: https://www.satispay.com/it-it/legal-hub/
+  detail: >-
+    Satispay publishes a legal hub with terms and privacy documentation, but no named certification
+    (SOC 2, ISO 27001, PCI DSS) and no trust center or compliance page was found on its own surface. No
+    Compliance or TrustCenter pointer is emitted, because none would be backed by a published artifact.

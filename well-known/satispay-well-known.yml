@@ -1,0 +1,77 @@
+generated: '2026-08-26'
+method: probed
+source: live GET probes of /.well-known/* on every apis.yml and OpenAPI servers[] host
+note: >-
+  One real document was served: RFC 9116 security.txt on www.satispay.com, saved verbatim as
+  satispay-security.txt. Every other path 404d. developers.satispay.com, authservices.satispay.com and
+  dashboard.satispay.com serve no /.well-known documents; on www.satispay.com the non-security.txt paths
+  answer with a 301/302 redirect to a trailing-slash marketing 404 rather than a document, which is a miss.
+  No api-catalog, no OpenID/OAuth metadata, no ai-plugin.json, no agent card anywhere.
+hosts:
+- host: www.satispay.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: satispay-security.txt
+  - path: /.well-known/openid-configuration
+    status: 301
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+  - path: /.well-known/api-catalog
+    status: 301
+  - path: /.well-known/ai-plugin.json
+    status: 302
+  - path: /.well-known/agent-card.json
+    status: 302
+  - path: /.well-known/agent.json
+    status: 302
+- host: developers.satispay.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: authservices.satispay.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: dashboard.satispay.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 301
+  - path: /.well-known/oauth-authorization-server
+    status: 301
+  - path: /.well-known/api-catalog
+    status: 301
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404

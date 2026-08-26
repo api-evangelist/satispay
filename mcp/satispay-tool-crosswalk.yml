@@ -1,0 +1,153 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  mcp/satispay-mcp.yml (probed), openapi/satispay-gbusiness-api.json, openapi/satispay-production.json,
+  openapi/satispay-sandbox.json
+note: >-
+  Satispay has both an MCP endpoint and published OpenAPI, so a crosswalk is owed. It cannot be populated
+  on the MCP side: the live tools/list is auth-gated (HTTP 401, Authorization required) and Satispay
+  publishes no tool list anywhere else — its llms.txt is a documentation index, not a tool manifest. No
+  tool names are guessed. The crosswalk is therefore honest about the shape of the divergence: every
+  published REST operation is currently rest_only with respect to any agent that cannot authenticate to
+  the MCP server, and the MCP server that does exist serves documentation, not payments.
+surfaces:
+  openapi:
+  - file: openapi/satispay-gbusiness-api.json
+    host: https://authservices.satispay.com/g_business/v1
+    gated: false
+    note: Spec is public; calling it requires an RSA-signed request with a merchant KeyId.
+  - file: openapi/satispay-production.json
+    host: https://authservices.satispay.com
+    gated: false
+  - file: openapi/satispay-sandbox.json
+    host: https://staging.authservices.satispay.com
+    gated: false
+  graphql:
+    endpoint: null
+    note: No GraphQL surface published or discovered.
+  mcp:
+    url: https://developers.satispay.com/mcp
+    gated: true
+    gate: 'JSON-RPC returns -32001 "Authorization required" (HTTP 401)'
+    scope: documentation portal, not the payments API
+crosswalk: []
+mcp_only: []
+rest_only:
+- operationId: keyid
+  method: POST
+  path: /g_business/v1/authentication_keys
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: create-a-payment
+  method: POST
+  path: /g_business/v1/payments
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-the-details-of-a-payment
+  method: GET
+  path: /g_business/v1/payments/{id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: update-a-payment
+  method: PUT
+  path: /g_business/v1/payments/{id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-list-of-payments
+  method: GET
+  path: /g_business/v1/payments
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: mv-create-payment
+  method: POST
+  path: /g_business/v1/payments
+  reason: Meal Voucher variant of create-payment; MCP tool set is auth-gated.
+- operationId: mv-get-payment-details
+  method: GET
+  path: /g_business/v1/payments/{id}
+  reason: Meal Voucher variant; MCP tool set is auth-gated.
+- operationId: mv-update-payment
+  method: PUT
+  path: /g_business/v1/payments/{id}
+  reason: Meal Voucher variant; MCP tool set is auth-gated.
+- operationId: fringe-create-payment
+  method: POST
+  path: /g_business/v1/payments
+  reason: Fringe Benefit variant; MCP tool set is auth-gated.
+- operationId: fringe-get-payment-details
+  method: GET
+  path: /g_business/v1/payments/{id}
+  reason: Fringe Benefit variant; MCP tool set is auth-gated.
+- operationId: fringe-update-payment
+  method: PUT
+  path: /g_business/v1/payments/{id}
+  reason: Fringe Benefit variant; MCP tool set is auth-gated.
+- operationId: create-new-report
+  method: POST
+  path: /g_business/v1/reports
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-list-of-reports
+  method: GET
+  path: /g_business/v1/reports
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: retrieve-a-report
+  method: GET
+  path: /g_business/v1/reports/{report_id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: retrive-consumer
+  method: GET
+  path: /g_business/v1/consumers/{phone_number}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: retrieve-shop-profile
+  method: GET
+  path: /g_business/v1/profile/me
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: retrieve-daily-closure
+  method: GET
+  path: /g_business/v1/daily_closure/{daily_closure_date}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: create-authorization
+  method: POST
+  path: /g_business/v1/pre_authorized_payment_tokens
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-authorization
+  method: GET
+  path: /g_business/v1/pre_authorized_payment_tokens/{id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: update-authorization
+  method: PUT
+  path: /g_business/v1/pre_authorized_payment_tokens/id
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: create-mqtt-certificates
+  method: POST
+  path: /g_business/v1/mqtt_certificates
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: open-session
+  method: POST
+  path: /g_business/v1/sessions
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-session-details
+  method: GET
+  path: /g_business/v1/sessions/{id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: update-session
+  method: PATCH
+  path: /g_business/v1/sessions/{id}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: create-session-event
+  method: POST
+  path: /g_business/v1/sessions/{id}/events
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: get-software-version-details
+  method: GET
+  path: /g_business/v1/vendors/{vendor}/products/{product}/os/{os_version}/software/{software}
+  reason: MCP tool set is auth-gated and unenumerable.
+- operationId: testinput
+  method: POST
+  path: /wally-services/protocol/tests/signature
+  reason: Sandbox signature-verification endpoint; MCP tool set is auth-gated.
+coverage:
+  rest_operations: 27
+  mcp_tools_known: 0
+  mapped: 0
+  mcp_only: 0
+  rest_only: 27
+  confidence: low
+  confidence_reason: >-
+    Nothing was mapped because nothing could be enumerated on the MCP side. This records an unmeasured
+    surface, not a measured absence of overlap.

@@ -1,0 +1,45 @@
+generated: '2026-08-26'
+method: searched
+source: >-
+  https://developers.satispay.com/llms.txt (full documentation index),
+  https://developers.satispay.com/reference/handle-errors,
+  openapi/satispay-gbusiness-api.json, openapi/satispay-production.json
+limit_count: 0
+note: >-
+  Satispay publishes no numeric rate limits. The complete documentation index at llms.txt contains no
+  rate-limit, quota or throttling page, and none of the three published OpenAPI definitions declare a
+  429 response or any RateLimit-* / X-RateLimit-* / Retry-After header. What does exist is an enforcement
+  signal without a published threshold: HTTP 403 with error code 70, "Anti-hammering violation". An
+  integrator therefore cannot budget requests in advance and can only discover the ceiling by hitting it.
+limits: []
+exhaustion:
+  status_code: 403
+  error_code: '70'
+  message: Anti-hammering violation
+  source: openapi/satispay-gbusiness-api.json
+  note: >-
+    Not the conventional 429. A client that only special-cases 429 will read Satispay's rate limiting as a
+    generic authorization failure and may retry immediately, making it worse.
+response_headers:
+  ratelimit_headers: none published
+  retry_after: not published
+  request_id: >-
+    No request-id header is documented on success. The wlt field in an error body is the only trace
+    identifier Satispay exposes, and it is only present on failures.
+retry_guidance:
+  docs: https://developers.satispay.com/reference/handle-errors
+  provider_statement: >-
+    Satispay requires a retry policy for all non-2xx responses (500/502/503 named explicitly) and directs
+    integrators to the Idempotency-Key header so retries cannot double-charge.
+  derived_advice: >-
+    Because no Retry-After is returned, back off exponentially on error code 70 and carry the original
+    Idempotency-Key on every retry of a POST.
+inbound_throttling:
+  surface: merchant callback_url
+  docs: https://developers.satispay.com/reference/callback-s2s
+  provider_statement: >-
+    Satispay explicitly tells merchants to implement throttling on their own callback endpoint, warning
+    that concurrent callback volume scales with concurrent payments.
+  retry_policy: >-
+    Satispay retries a callback up to 3 times on a non-2XX response, at intervals of 1s, 2s and 4s, then
+    stops — after which the merchant is expected to poll payment status.

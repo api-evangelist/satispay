@@ -1,0 +1,87 @@
+generated: '2026-08-26'
+method: probed
+source: https://developers.satispay.com/mcp
+status: published
+note: >-
+  Satispay serves a live remote MCP endpoint on its own developer-portal host. A GET returns
+  "This URL can only be accessed with a MCP client." (HTTP 200) and a JSON-RPC POST returns
+  {"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"}} (HTTP 401) for both
+  tools/list and initialize, so the live tool schemas are auth-gated and were not captured. This is a
+  documentation MCP server surfacing the developer portal, not the payments API — it is served from
+  developers.satispay.com, not from the authservices.satispay.com API host. Satispay serves no OAuth
+  discovery metadata for it: /.well-known/oauth-protected-resource,
+  /.well-known/oauth-protected-resource/mcp and /.well-known/oauth-authorization-server all 404 on that
+  host, so an MCP client that follows RFC 9728 to find the authorization server has nowhere to go.
+deployment:
+  mode: remote
+  endpoint: https://developers.satispay.com/mcp
+  auth: oauth
+  verified: probed
+evidence:
+- url: https://developers.satispay.com/mcp
+  method: GET
+  http_status: 200
+  content_type: text/html
+  body: This URL can only be accessed with a MCP client.
+- url: https://developers.satispay.com/mcp
+  method: POST
+  rpc_method: tools/list
+  http_status: 401
+  body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+- url: https://developers.satispay.com/mcp
+  method: POST
+  rpc_method: initialize
+  http_status: 401
+  body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+- url: https://developers.satispay.com/.well-known/oauth-protected-resource
+  http_status: 404
+- url: https://developers.satispay.com/.well-known/oauth-authorization-server
+  http_status: 404
+tools:
+  captured: false
+  reason: >-
+    tools/list requires authorization. No tool names or inputSchemas were obtained, and none are invented
+    here. Capturing them requires authenticated introspection.
+candidate_tools:
+  status: candidate
+  method: derived
+  source: openapi/satispay-gbusiness-api.json, openapi/satispay-production.json
+  note: >-
+    These are NOT tools Satispay ships. They are the operations a payments MCP server would expose if one
+    existed, derived one-to-one from the published OpenAPI operationIds, recorded so the crosswalk in
+    mcp/satispay-tool-crosswalk.yml has a rest_only baseline.
+  tools:
+  - name: create_payment
+    rest: create-a-payment
+  - name: get_payment
+    rest: get-the-details-of-a-payment
+  - name: update_payment
+    rest: update-a-payment
+  - name: list_shop_payments
+    rest: get-list-of-payments
+  - name: create_authorization
+    rest: create-authorization
+  - name: get_authorization
+    rest: get-authorization
+  - name: update_authorization
+    rest: update-authorization
+  - name: get_consumer
+    rest: retrive-consumer
+  - name: get_shop_profile
+    rest: retrieve-shop-profile
+  - name: retrieve_daily_closure
+    rest: retrieve-daily-closure
+  - name: create_report
+    rest: create-new-report
+  - name: list_reports
+    rest: get-list-of-reports
+  - name: retrieve_report
+    rest: retrieve-a-report
+  - name: open_session
+    rest: open-session
+  - name: get_session
+    rest: get-session-details
+  - name: update_session
+    rest: update-session
+  - name: create_session_event
+    rest: create-session-event
