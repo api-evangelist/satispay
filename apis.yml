@@ -32,57 +32,94 @@ tags:
 - Meal Vouchers
 - Company
 apis:
-- aid: satispay-gbusiness-api
-  name: Satispay GBusiness API
-  description: >-
-    The Satispay GBusiness API is the merchant-facing payments API. It creates and updates payments across the
-    MATCH_CODE, MATCH_USER, REFUND, PRE_AUTHORIZED, FUND_LOCK, PRE_AUTHORIZED_FUND_LOCK and HOTP_AUTH flows,
-    lists shop payments, exchanges an activation code for a KeyId, and creates transaction reports. Amounts are
-    integer cents, EUR only, and every request is signed with an RSA key pair.
+- aid: satispay:satispay-authentication-keys-api
+  name: Satispay Authentication Keys API
+  description: The Authentication Keys API from Satispay — 1 operation(s) for authentication keys.
   humanURL: https://developers.satispay.com/reference/introduction
   baseURL: https://authservices.satispay.com/g_business/v1
   tags:
-  - Payments
-  - Refunds
-  - Reports
+  - Authentication Keys
   properties:
   - type: OpenAPI
-    url: openapi/satispay-gbusiness-api.json
+    url: openapi/satispay-authentication-keys-api-openapi.yml
   - type: Documentation
     url: https://developers.satispay.com/docs/welcome
   - type: APIReference
     url: https://developers.satispay.com/reference/introduction
-- aid: satispay-gbusiness-production
-  name: Satispay GBusiness API (production surface)
-  description: >-
-    The production-environment definition Satispay publishes alongside the payments API, covering consumer
-    lookup, daily closure retrieval, shop profile, pre-authorized payment tokens, MQTT certificates for
-    in-store devices, checkout sessions and their events, software version lookup, and the reports surface.
-  humanURL: https://developers.satispay.com/reference/endpoints
-  baseURL: https://authservices.satispay.com
+  - type: APIReference
+    url: https://developers.satispay.com/reference/endpoints
+  - type: APIReference
+    url: https://developers.satispay.com/reference/testinput
+- aid: satispay:satispay-g-business-api
+  name: Satispay G Business API
+  description: The G Business API from Satispay — 13 operation(s) for g business.
+  humanURL: https://developers.satispay.com/reference/introduction
+  baseURL: https://authservices.satispay.com/g_business/v1
+  tags:
+  - G Business
+  properties:
+  - type: OpenAPI
+    url: openapi/satispay-g-business-api-openapi.yml
+  - type: Documentation
+    url: https://developers.satispay.com/docs/welcome
+  - type: APIReference
+    url: https://developers.satispay.com/reference/introduction
+  - type: APIReference
+    url: https://developers.satispay.com/reference/endpoints
+  - type: APIReference
+    url: https://developers.satispay.com/reference/testinput
+- aid: satispay:satispay-payments-api
+  name: Satispay Payments API
+  description: The Payments API from Satispay — 6 operation(s) for payments.
+  humanURL: https://developers.satispay.com/reference/introduction
+  baseURL: https://authservices.satispay.com/g_business/v1
   tags:
   - Payments
-  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/satispay-payments-api-openapi.yml
+  - type: Documentation
+    url: https://developers.satispay.com/docs/welcome
+  - type: APIReference
+    url: https://developers.satispay.com/reference/introduction
+  - type: APIReference
+    url: https://developers.satispay.com/reference/endpoints
+  - type: APIReference
+    url: https://developers.satispay.com/reference/testinput
+- aid: satispay:satispay-reports-api
+  name: Satispay Reports API
+  description: The Reports API from Satispay — 1 operation(s) for reports.
+  humanURL: https://developers.satispay.com/reference/introduction
+  baseURL: https://authservices.satispay.com/g_business/v1
+  tags:
   - Reports
   properties:
   - type: OpenAPI
-    url: openapi/satispay-production.json
+    url: openapi/satispay-reports-api-openapi.yml
+  - type: Documentation
+    url: https://developers.satispay.com/docs/welcome
+  - type: APIReference
+    url: https://developers.satispay.com/reference/introduction
   - type: APIReference
     url: https://developers.satispay.com/reference/endpoints
-- aid: satispay-gbusiness-sandbox
-  name: Satispay GBusiness API (sandbox)
-  description: >-
-    The staging/sandbox definition Satispay publishes for verifying an RSA-signed request before going live.
-    It exposes the authentication test endpoint used to confirm the Digest, Message, Signature and
-    Authorization header have been composed correctly.
-  humanURL: https://developers.satispay.com/reference/testinput
-  baseURL: https://staging.authservices.satispay.com
+  - type: APIReference
+    url: https://developers.satispay.com/reference/testinput
+- aid: satispay:satispay-wally-services-api
+  name: Satispay Wally Services API
+  description: The Wally Services API from Satispay — 1 operation(s) for wally services.
+  humanURL: https://developers.satispay.com/reference/introduction
+  baseURL: https://authservices.satispay.com/g_business/v1
   tags:
-  - Sandbox
-  - Authentication
+  - Wally Services
   properties:
   - type: OpenAPI
-    url: openapi/satispay-sandbox.json
+    url: openapi/satispay-wally-services-api-openapi.yml
+  - type: Documentation
+    url: https://developers.satispay.com/docs/welcome
+  - type: APIReference
+    url: https://developers.satispay.com/reference/introduction
+  - type: APIReference
+    url: https://developers.satispay.com/reference/endpoints
   - type: APIReference
     url: https://developers.satispay.com/reference/testinput
 maintainers:
