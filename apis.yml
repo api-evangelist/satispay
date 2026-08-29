@@ -11,6 +11,18 @@ description: >-
   than OAuth, POSTs accept an Idempotency-Key header, and payment status changes are delivered to a merchant
   callback_url. Satispay also ships first-party e-commerce plugins (Shopify, Shopware, WooCommerce,
   PrestaShop, Magento 2), a PHP SDK, and in-store Java and Swift SDKs.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.satispay.com/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/satispay/refs/heads/main/apis.yml
 x-type: company
