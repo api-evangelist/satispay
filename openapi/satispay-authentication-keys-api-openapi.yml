@@ -1,0 +1,196 @@
+openapi: 3.2.0
+info:
+  title: Satispay - GBusiness Authentication Keys API
+  version: 1.0.0
+  contact:
+    name: Satispay Tech
+    email: tech@satispay.com
+    url: https://developers.satispay.com
+servers:
+- url: https://authservices.satispay.com/g_business/v1
+  description: Production
+- url: https://staging.authservices.satispay.com/g_business/v1
+  description: Sandbox
+tags:
+- name: Authentication Keys
+paths:
+  /authentication_keys:
+    post:
+      summary: 2. Obtain the KeyId
+      operationId: keyid
+      parameters:
+      - in: header
+        name: x-satispay-deviceinfo
+        schema:
+          type: string
+        description: The device information (e.g., hostname)
+      - in: header
+        name: x-satispay-devicetype
+        schema:
+          type: string
+          enum:
+          - SMARTPHONE
+          - TABLET
+          - CASH REGISTER
+          - POS
+          - PC
+          - ECOMMERCE_PLUGIN
+        description: The device type
+      - in: header
+        name: x-satispay-os
+        schema:
+          type: string
+        description: The Operating System name (e.g., Windows)
+      - in: header
+        name: x-satispay-osv
+        schema:
+          type: string
+        description: The Operating System version (e.g., 10)
+      - in: header
+        name: x-satispay-apph
+        schema:
+          type: string
+        description: The software house name (e.g., Satispay)
+      - in: header
+        name: x-satispay-appn
+        schema:
+          type: string
+        description: The software name (e.g., My awesome app)
+      - in: header
+        name: x-satispay-appv
+        schema:
+          type: string
+        description: The software version (e.g., v2.0.0)
+      - in: header
+        name: x-satispay-tracking-code
+        schema:
+          type: string
+        description: 'The tracking code used by Satispay commercial partners.
+
+
+          Use this code only if explicitly required by Satispay.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                public_key:
+                  type: string
+                  description: The `RSA` public key, in `PEM` format generated in the [previous step](ref:generate-rsa-keys).
+                token:
+                  type: string
+                  description: The activation code required to authenticate the APIs. <br> <br> For more information read [here](ref:keyid#how-the-token-field-works)
+              required:
+              - public_key
+              - token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key_id:
+                    type: string
+                    description: The KeyId generated for the activation code sent. <br> <br> The returned value must be saved in a safe place with the private and the public keys used.
+              examples:
+                response:
+                  value: "{\n    \"key_id\": \"4ekqhmf77q95deciis2frre12el393rteletbrg4rffqri3n58lsjsvf6uph934o7vr69r93iu4ifc3tkeidlg5fhoogo3grmh99lr2g94a6aerbf56m48og47e6vnbfu13rf1vvj3l4b3mn3qd2ttoc4a8hh2jgb589s59d56tdmp7dkuobesvfmnnpf8cmg7646do5\"\n}\n"
+        '400':
+          description: 400 Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `34` <br> The `public_key` that you sent is invalid. <br> Please check the formatting as described above.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"code\": 34,\n    \"message\": \"Bad request. Invalid RSA key\",\n    \"wlt\": \"pAfiPytd\"\n}"
+        '403':
+          description: 403 Forbidden or invalid authorization header
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `45` <br> The `token` that you sent has already been paired. <br> Remember that activation codes are one-time use.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"code\": 45,\n    \"message\": \"Forbidden\",\n    \"wlt\": \"t5JPz9Oq\"\n}"
+        '404':
+          description: 404 Resource not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `41` <br> The `token` that you has not been found on the system. <br> Please verify that you are using it in the correct environment [endpoint](ref:endpoints).
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"code\": 41,\n    \"message\": \"Resource not found\",\n    \"wlt\": \"BmYAT6jH\"\n}"
+      x-readme:
+        explorer-enabled: true
+        samples-languages:
+        - shell
+        - php
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/authentication_keys \\\n  --header 'Content-Type: application/json' \\\n  --data '{\n    \"public_key\": \"-----BEGIN PUBLIC KEY-----\\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAkbVuFw4g+Zpf2mC1EpG2\\ngapOCWUp+8Xb/DjTk/WRJoFOZ+OGKZ7DZzlgGVlYgY59T4+fHS/aGXQRIYIgH3sr\\na17x2PXcgOFcWJbyAL9kS+sUej8ePkt/aeCT5i32dE27qV9T7wfYqBdzKOPdhHzN\\n9p8o7SOQgmyYsw6FdioQ+zMhCDT0gF3wiXHqCztPMQr5Cb1b6tDiZO0VKNk71qXh\\nl1ltvyqr68/ULlTF9oKHU3TybErU/1uHMi6PWwsylJDZdETfA+lnNFvkMhuza8Ma\\ngdQQJ7/Q3wQPuZGmjBTLt5jWtnNXts+QCOkUGjz2XK06+v8J9tWf+ltBNfMdN8Ou\\nYU5CxEG7+phpuexK/DhfVNyWz5Awagyn6C4Iu0cUo+s89aLMcg4hgSVZJb5CkY6K\\n4ymLzgVp+M5J7g2BSXk0L/eCSkCeOy/RNs3/nJk9QlEzb7xBjwITAv3pD0X6AXmr\\nOlVKW4O9ovjmXp+8UdTh/YXT6xoC4+kuGBKensLwH4Vd69llmFhneEykeEOUQSAt\\nrmPm7Us0DSpXoUjiimd8eFsNV3wqSVHLV1jadlkhusYdmWhDvdrqHoXol/T5aN/E\\nP3HopzFrNy0w01DCSWv+PDjx5i6MmhTYTYI9MlSmVsPUGU3g0CV3MCVwUFu25jze\\nAwZuPOe/vLyM/pOB42A8ibUCAwEAAQ==\\n-----END PUBLIC KEY-----\",\n    \"token\": \"6N3ECU\"\n  }'"
+          name: ''
+          correspondingExample: ''
+        - language: php
+          code: '<?php
+
+
+            require_once(''../vendor/autoload.php'');
+
+
+            // authenticate with the activation code
+
+            $authentication = \SatispayGBusiness\Api::authenticateWithToken("6N3ECU");
+
+
+            // persist authentication credentials
+
+            $publicKey = $authentication->publicKey;
+
+            $privateKey = $authentication->privateKey;
+
+            $keyId = $authentication->keyId;
+
+            '
+          name: ''
+          correspondingExample: ''
+      tags:
+      - Authentication Keys
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true

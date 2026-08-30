@@ -1,0 +1,298 @@
+openapi: 3.2.0
+info:
+  title: Satispay - GBusiness Reports API
+  version: 1.0.0
+  contact:
+    name: Satispay Tech
+    email: tech@satispay.com
+    url: https://developers.satispay.com
+servers:
+- url: https://authservices.satispay.com/g_business/v1
+  description: Production
+- url: https://staging.authservices.satispay.com/g_business/v1
+  description: Sandbox
+tags:
+- name: Reports
+paths:
+  /reports:
+    post:
+      summary: Create new report
+      operationId: create-new-report
+      parameters:
+      - in: header
+        name: Content-Type
+        description: Always send this header as `application/json`.
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Host
+        description: The host declared in the [signature](ref:sign-the-string).
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Date
+        description: The date declared in the [signature](ref:sign-the-string).
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Digest
+        description: The digest declared in the [signature](ref:sign-the-string).
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Authorization
+        description: The request [signature](ref:sign-the-string).
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: Idempotency-Key
+        description: The idempotent request key. <br> <br> You can read more [here](ref:idempotency).
+        required: false
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: The type of report that you want to extract. <br> <br> `PAYMENT_FEE` <br> Generates a report that includes collected fees and group id for each transaction.
+                format:
+                  type: string
+                  description: The type report format required. <br> <br> `CSV` <br> Generates an CSV file format. <br> <br> `XLS` <br> Generates an XLS file format.
+                  enum:
+                  - CSV
+                  - XLS
+                notification:
+                  type: object
+                  properties:
+                    email_cc_list:
+                      type: array
+                      description: The array of emails that will be notified once the report is ready.
+                      items:
+                        type: string
+                    callback_url:
+                      type: string
+                      description: The URL to be triggered via an HTTP GET request once the report is ready.
+                      items:
+                        type: string
+                query_type:
+                  type: string
+                  description: The query type that you wish to use in the `query_payload` parameter. <br> <br> `PAYMENT_DATE_INTERVAL` <br> The only query type supported.
+                  enum:
+                  - PAYMENT_DATE_INTERVAL
+                query_payload:
+                  type: object
+                  properties:
+                    payment_date_from:
+                      type: string
+                      description: 'The starting date for payments in the report. <br> <br> The format must be: `YYYY-MM-dd`.'
+                    payment_date_to:
+                      type: string
+                      description: 'The ending date for payments in the report. <br> <br> The format must be: `YYYY-MM-dd`.'
+                    time_zone:
+                      type: string
+                      description: The timezone. <br> <br> e.g. `Europe/Rome`, you could find a complete list [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
+                    columns:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          identifier:
+                            type: string
+                            description: The identifier of the columns that you want to add. <br> <br> Each identifier can be used only once per `columns` field. <br> <br> `transaction_id` <br> The payment id. <br> <br> `transaction_acceptance_date` <br> The payment acceptance date. <br> <br> `transaction_amount_unit` <br> The payment total amount. <br> <br> `transaction_signed_amount_unit` <br> The payment signed total amount (negative for refunds). <br> <br> `transaction_type` <br> The payment type (`TO_BUSINESS` or `REFUND_TO_BUSINESS`). <br> <br> `transaction_external_code` <br> The payment external code. <br> <br> `transaction_counterpart_type` <br> The payment counterpart type (`CUSTOMER` or `SHOP`). <br> <br> `transaction_counterpart_id` <br> The payment counterpart id (customer or shop). <br> <br> `transaction_currency` <br> The payment currency used. <br> <br> `transaction_group_id` <br> The payment group id (e.g. refunds). <br> <br> `transaction_e_money_amount_unit` <br> The payment e-wallet amount unit. <br> <br> `transaction_meal_voucher_amount_unit` <br> The payment meal vouchers amount. <br> <br> `transaction_fringe_amount_unit` <br> The payment fringe amount. <br> <br> `fee_amount_unit` <br> The payment total amount of fees. <br> <br> `fee_acceptance_date` <br> The fee acceptance date. <br> <br> `fee_signed_amount_unit` <br> The fees signed total signed amount. <br> <br> `fee_transaction_original_id` <br> The original transaction fee id. <br> <br> `fee_transaction_id` <br> The transaction fee id. <br> <br> `fee_type` <br> The fee type (net). <br> <br> `fee_id` <br> The fee id. <br> <br> `shop_id` <br> The shop id. <br> <br> `shop_name` <br> The shop name. <br> <br> `shop_external_code` <br> The shop external code.
+                            enum:
+                            - transaction_id
+                            - transaction_acceptance_date
+                            - transaction_amount_unit
+                            - transaction_signed_amount_unit
+                            - transaction_type
+                            - transaction_external_code
+                            - transaction_counterpart_type
+                            - transaction_counterpart_id
+                            - transaction_currency
+                            - transaction_group_id
+                            - transaction_e_money_amount_unit
+                            - transaction_meal_voucher_amount_unit
+                            - fee_amount_unit
+                            - fee_acceptance_date
+                            - fee_signed_amount_unit
+                            - fee_transaction_original_id
+                            - fee_transaction_id
+                            - fee_type
+                            - fee_id
+                            - shop_id
+                            - shop_name
+                            - shop_external_code
+                          name:
+                            type: string
+                            description: 'The column name that you will see on the header of your report. <br> <br> This field can contain a custom string value up to 50 chars. <br> The only allowed characters are: letters, numbers, `-` `_` and spaces.'
+                          order:
+                            type: integer
+                            description: The report column order. <br> <br> The array order will be followed if left empty.
+                        required:
+                        - identifier
+                      description: This array represent the list of columns that will be in your export. <br> <br> This field is optional. <br> If not provided, the report will default to the standard version.
+                  required:
+                  - payment_date_from
+                  - payment_date_to
+              required:
+              - type
+              - format
+              - query_type
+              - query_payload
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The unique report id. <br> <br> This can be used to retrieve the generated report.
+                  type:
+                    type: string
+                    description: The report type generated. <br> <br> `PAYMENT_FEE` <br> A report that includes collected fees and group id for each transaction.
+                  status:
+                    type: string
+                    description: The current report status. <br> <br> `PENDING` <br> The report will be generated soon. <br> <br> `SUCCESS` <br> The report has been successfully generated.
+                  notification:
+                    type: object
+                    properties:
+                      email_cc_list:
+                        type: array
+                        description: The array of emails that will be notified once the report is ready.
+                        items:
+                          type: string
+                      callback_url:
+                        type: string
+                        description: The URL to be triggered via an HTTP GET request once the report is ready.
+                        items:
+                          type: string
+                  query_type:
+                    type: string
+                    description: The query type that you used in the `query_payload` parameter. <br> <br> `PAYMENT_DATE_INTERVAL` <br> The only query type supported.
+                  query_payload:
+                    type: object
+                    properties:
+                      payment_date_from:
+                        type: string
+                        description: 'The starting date for payments in the report. <br> <br> The format must be: `YYYY-MM-dd`.'
+                      payment_date_to:
+                        type: string
+                        description: 'The ending date for payments in the report. <br> <br> The format must be: `YYYY-MM-dd`.'
+                      time_zone:
+                        type: string
+                        description: The timezone. <br> <br> e.g. `Europe/Rome`, you could find a complete list [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
+                      columns:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            identifier:
+                              type: string
+                              description: The identifier of the columns in the current export. <br> <br> You can find the value listed in the request.
+                            name:
+                              type: string
+                              description: The report column order.
+                            order:
+                              type: integer
+                              description: The report column order. <br> <br> The array order will be followed if left empty.
+                          required: []
+                        description: This array represent the list of columns that will be in your export. <br> <br> This field is optional. <br> If not provided, the report will default to the standard version.
+                    required: []
+              examples:
+                response:
+                  value: "{\n    \"type\": \"PAYMENT_FEE\",\n    \"notification\": {\n        \"email_cc_list\": [\n            \"email@mywebsite.com\"\n        ],\n        \"callback_url\": \"https://example.com/satispay-callback?report_id={uuid}\"\n    },\n    \"query_type\": \"PAYMENT_DATE_INTERVAL\",\n    \"query_payload\": {\n        \"from\": \"2020-01-15\",\n        \"to\": \"2020-02-01\",\n        \"time_zone\": \"Europe/Rome\",\n        \"merchant_uid\": \"743bcf2b-eb8a-11e5-bd74-0a1b47c3629f\",\n        \"columns\": [\n            {\n                \"identifier\": \"transaction_id\",\n                \"name\": \"Transaction id\",\n                \"order\": 1\n            },\n            {\n                \"identifier\": \"fee_amount_unit\",\n                \"name\": \"Fee amount unit\",\n                \"order\": 2\n            }\n        ]\n    },\n    \"id\": \"d22f74ac-5fd1-4e0d-833c-1198b1d769bc\",\n    \"status\": \"PENDING\"\n}"
+        '400':
+          description: '400'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `189` <br> Invalid report payload. <br> <br> `190` <br> Invalid query type. <br> <br> `244` <br> Invalid report merchant id.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"wlt\": \"OnU07Vln\",\n    \"code\": 189\n}"
+        '401':
+          description: '401'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `34` <br> Merchant not found or unauthorized.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"wlt\": \"OnU07Vln\",\n    \"code\": 34\n}"
+        '403':
+          description: '403'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  wlt:
+                    type: string
+                    description: The request CID/WLT, save this string in case of errors. <br> This will help our IT support to trace the request.
+                  code:
+                    type: string
+                    description: The specific system error code. <br> <br> `45` <br> Unable to fulfill the request.
+                  message:
+                    type: string
+                    description: The error message.
+              examples:
+                response:
+                  value: "{\n    \"wlt\": \"OnU07Vln\",\n    \"code\": 45\n}"
+      x-readme:
+        headers:
+        - key: Content-Type
+          value: application/json
+        - key: Host
+          value: authservices.satispay.com
+        - key: Date
+          value: Fri, 01 Jul 2020 09:18:17 +0200
+        - key: Digest
+          value: SHA-256=…the request digest
+        - key: Authorization
+          value: Signature keyId="4ekqhmf…", algorithm="rsa-sha256", headers="(request-target) host date digest", signature="C5yynRx…"
+        explorer-enabled: true
+        samples-languages:
+        - shell
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/reports \\\n  --header 'Content-Type: application/json' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 01 Jul 2020 16:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"4ekqhm...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --data '{\n    \"type\": \"PAYMENT_FEE\",\n    \"format\": \"CSV\",\n    \"query_type\": \"PAYMENT_DATE_INTERVAL\",\n    \"query_payload\": {\n      \"payment_date_from\": \"2020-06-10\",\n      \"payment_date_to\": \"2020-06-12\",\n      \"time_zone\": \"Europe/Rome\"\n    }\n  }'\n"
+          name: ''
+          correspondingExample: ''
+      tags:
+      - Reports
+x-readme:
+  explorer-enabled: true
+  proxy-enabled: true

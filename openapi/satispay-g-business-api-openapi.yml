@@ -1,0 +1,1383 @@
+openapi: 3.2.0
+info:
+  title: production G Business API
+  version: 1.7.1
+servers:
+- url: https://authservices.satispay.com
+security:
+- {}
+tags:
+- name: G Business
+paths:
+  /g_business/v1/consumers/{phone_number}:
+    get:
+      summary: Get consumer
+      description: API to retrieve a customer uid from the phone number
+      operationId: retrive-consumer
+      parameters:
+      - name: phone_number
+        in: path
+        description: The phone number formatted with its prefix (eg. +390000000000)
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\": \"889ab18d-b319-490c-8899-c350c076a901\"\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 889ab18d-b319-490c-8899-c350c076a901
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Authorization header not present or invalid
+      deprecated: false
+      security: []
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url 'https://authservices.satispay.com/g_business/v1/consumers/+390000000000' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\""
+        - language: php
+          code: '\SatispayGBusiness\Api::setPublicKey("yourPublicKey");
+
+            \SatispayGBusiness\Api::setPrivateKey("yourPrivateKey");
+
+            \SatispayGBusiness\Api::setKeyId("yourKeyId");
+
+
+            $payment = \SatispayGBusiness\Consumer::get("+390000000000");'
+        samples-languages:
+        - curl
+        - php
+      tags:
+      - G Business
+  /g_business/v1/daily_closure/{daily_closure_date}:
+    get:
+      summary: Retrieve daily closure
+      description: API to retrieve shop daily closure
+      operationId: retrieve-daily-closure
+      parameters:
+      - name: daily_closure_date
+        in: path
+        description: The day on which retrieve the daily closure (format yyyyMMdd)
+        schema:
+          type: string
+        required: true
+      - name: generate_pdf
+        in: query
+        description: Generate the pdf with the daily closure amounts
+        schema:
+          type: boolean
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"shop_daily_closure\":\n  {\n    \"id\": \"20190617__e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n    \"type\": \"SHOP\",\n    \"customer_uid\": \"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n    \"amount_unit\": 3500,\n    \"currency\": \"EUR\"\n  },\n  \"pdf\":\n  {\n    \"url\": \"<presigned_url>\",\n    \"http_method\": \"GET\",\n    \"expires_in_sec\": 3600,\n    \"expiration\":\"<date>\",\n    \"key\":\"<key>\",\n    \"bucket\":\"<bucket>\"\n  } \n}"
+              schema:
+                type: object
+                properties:
+                  shop_daily_closure:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 20190617__e7ddb175-474a-4f5b-8820-cf96f0418c41
+                      type:
+                        type: string
+                        example: SHOP
+                      customer_uid:
+                        type: string
+                        example: e7ddb175-474a-4f5b-8820-cf96f0418c41
+                      amount_unit:
+                        type: integer
+                        example: 3500
+                        default: 0
+                      currency:
+                        type: string
+                        example: EUR
+                  pdf:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: <presigned_url>
+                      http_method:
+                        type: string
+                        example: GET
+                      expires_in_sec:
+                        type: integer
+                        example: 3600
+                        default: 0
+                      expiration:
+                        type: string
+                        example: <date>
+                      key:
+                        type: string
+                        example: <key>
+                      bucket:
+                        type: string
+                        example: <bucket>
+        '400':
+          description: '400'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Bad daily closure date format
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url 'https://authservices.satispay.com/g_business/v1/daily_closure/20190617?generate_pdf=true' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/profile/me:
+    get:
+      summary: Retrieve shop profile
+      description: API to retrieve shop details
+      operationId: retrieve-shop-profile
+      parameters:
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\": \"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n  \"merchant_uid\": \"2bfae1c2-837b-46ef-90d6-c2cd196fb6c2\",\n  \"name\": \"Satispay shop\",\n  \"address\": {\n    \"city\": \"Milano\",\n    \"zip_code\": \"20159\",\n    \"address\": \"Via Luigi Porro Lambertenghi\",\n    \"st_number\": \"7\",\n    \"country\": \"IT\"\n  },\n  \"geolocation\": {\n    \"lat\": 45.4896119,\n    \"lon\": 9.1846259\n  },\n  \"images\": [...],\n  \"localization\": \"STATIC\",\n  \"acceptance\": \"ACCEPTANCE\",\n  \"model\": \"BRICK_AND_MORTAR\",\n  \"qr_code_identifier\": \"S6Y-SHP--E7DDB175-474A-4F5B-8820-CF96F0418C41\"\n}"
+        '403':
+          description: '403'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+        '404':
+          description: '404'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: Resource not found
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url 'https://authservices.satispay.com/g_business/v1/profile/me' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"\n\n"
+          name: cURL
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/pre_authorized_payment_tokens:
+    post:
+      summary: Create authorization
+      description: API to request a new pre-authorized token
+      operationId: create-authorization
+      parameters:
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        description: The idempotent token of the request
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: The reason why the token is being request
+                callback_url:
+                  type: string
+                  description: The url that will be called with an http GET request if the pre-authorization status changes. Note that {uuid} will be replaced with the authorization token
+                redirect_url:
+                  type: string
+                  description: The url to redirect the user after the authorization flow is completed
+                metadata:
+                  type: object
+                  description: Generic field that can be used to store generic info. The field `phone_number` can be used to pre-fill the mobile number.
+                  properties: {}
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\":\"9b89c251-6151-4561-93cc-c027f4d7f034\",\n  \"code_identifier\":\"S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034\",\n  \"shop_uid\":\"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n  \"status\":\"PENDING\",\n  \"reason\":\"Monthly payment\",\n  \"callback_url\":\"https://myServer.com/myCallbackUrl/{uuid}\",\n  \"metadata\": {},\n\t\"redirect_url\": \"https://online.satispay.com/authorize/9b89c251-6151-4561-93cc-c027f4d7f034?redirect_url=https%3A%2F%2FmyServer.com%2FmyRedirectUrl\"\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 9b89c251-6151-4561-93cc-c027f4d7f034
+                  code_identifier:
+                    type: string
+                    example: S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034
+                  shop_uid:
+                    type: string
+                    example: e7ddb175-474a-4f5b-8820-cf96f0418c41
+                  status:
+                    type: string
+                    example: PENDING
+                  reason:
+                    type: string
+                    example: Monthly payment
+                  callback_url:
+                    type: string
+                    example: https://myServer.com/myCallbackUrl/{uuid}
+                  metadata:
+                    type: object
+                    properties: {}
+                  redirect_url:
+                    type: string
+                    example: https://online.satispay.com/authorize/9b89c251-6151-4561-93cc-c027f4d7f034?redirect_url=https%3A%2F%2FmyServer.com%2FmyRedirectUrl
+        '400':
+          description: '400'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Bad request
+        '401':
+          description: '401'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Unauthorized
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/pre_authorized_payment_tokens \\\n  --header 'Content-Type: application/json' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --data '{\n  \"reason\": \"Monthly payment\",\n  \"callback_url\": \"https://myServer.com/myCallbackUrl?payment_id={uuid}\",\n  \"redirect_url\": \"https://myServer.com/myRedirectUrl\"\n}'"
+        - language: php
+          code: "\\SatispayGBusiness\\Api::setPublicKey(\"yourPublicKey\");\n\\SatispayGBusiness\\Api::setPrivateKey(\"yourPrivateKey\");\n\\SatispayGBusiness\\Api::setKeyId(\"yourKeyId\");\n\npreAuthorizedPaymentToken = \\SatispayGBusiness\\PreAuthorizedPaymentToken::create([\n  \"reason\" => \"Monthly Payments\",\n  \"callback_url\" => \"https://myServer.com/myCallbackUrl?payment_id={uuid}\",\n  \"redirect_url\" => \"https://myServer.com/myRedirectUrl\"\n]);"
+          name: PHP
+        samples-languages:
+        - curl
+        - php
+      tags:
+      - G Business
+  /g_business/v1/pre_authorized_payment_tokens/{id}:
+    get:
+      summary: Get authorization
+      description: API to get details about pre-authorized token
+      operationId: get-authorization
+      parameters:
+      - name: id
+        in: path
+        description: Pre-Authorized Payment Token
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\": \"9b89c251-6151-4561-93cc-c027f4d7f034\",\n  \"code_identifier\": \"S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034\",\n  \"consumer_uid\": \"75d5c151-7b11-4bff-9149-d320dfa66461\",\n  \"shop_uid\": \"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n  \"status\": \"ACCEPTED\",\n  \"reason\": \"Monthly payment\",\n  \"callback_url\": \"https://myServer.com/myCallbackUrl/{uuid}\",\n  \"metadata\": {}\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 9b89c251-6151-4561-93cc-c027f4d7f034
+                  code_identifier:
+                    type: string
+                    example: S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034
+                  consumer_uid:
+                    type: string
+                    example: 75d5c151-7b11-4bff-9149-d320dfa66461
+                  shop_uid:
+                    type: string
+                    example: e7ddb175-474a-4f5b-8820-cf96f0418c41
+                  status:
+                    type: string
+                    example: ACCEPTED
+                  reason:
+                    type: string
+                    example: Monthly payment
+                  callback_url:
+                    type: string
+                    example: https://myServer.com/myCallbackUrl/{uuid}
+                  metadata:
+                    type: object
+                    properties: {}
+        '401':
+          description: '401'
+          content:
+            text/plain:
+              examples:
+                Unauthorized:
+                  value: Unauthorized
+        '404':
+          description: '404'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Resource not found
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url https://authservices.satispay.com/g_business/v1/pre_authorized_payment_tokens/9b89c251-6151-4561-93cc-c027f4d7f034 \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/pre_authorized_payment_tokens/id:
+    put:
+      summary: Update authorization
+      description: API to cancel/revoke a pre-authorized token or to associate an existing pre-authorized token in PENDING state with a consumer
+      operationId: update-authorization
+      parameters:
+      - name: id
+        in: path
+        description: Pre-Authorized Payment Token
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: The update status to perform (CANCELED).
+                consumer_uid:
+                  type: string
+                  description: Unique ID of the consumer used to bind the token.
+                metadata:
+                  type: string
+                  description: Generic field that can be used to store additional data.
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                OK - CANCEL/REVOKE:
+                  value: "{\n  \"id\": \"9b89c251-6151-4561-93cc-c027f4d7f034\",\n  \"code_identifier\": \"S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034\",\n  \"consumer_uid\": \"75d5c151-7b11-4bff-9149-d320dfa66461\",\n  \"shop_uid\": \"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n  \"status\": \"CANCELED\",\n  \"reason\": \"Monthly payment\",\n  \"callback_url\": \"https://myServer.com/myCallbackUrl/{uuid}\",\n  \"metadata\": {}\n}"
+                OK - ASSOCIATE CONSUMER:
+                  value: "{\n  \"id\": \"9b89c251-6151-4561-93cc-c027f4d7f034\",\n  \"code_identifier\": \"S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034\",\n  \"consumer_uid\": \"75d5c151-7b11-4bff-9149-d320dfa66461\",\n  \"shop_uid\": \"e7ddb175-474a-4f5b-8820-cf96f0418c41\",\n  \"status\": \"PENDING\",\n  \"reason\": \"Monthly payment\",\n  \"callback_url\": \"https://myServer.com/myCallbackUrl/{uuid}\",\n  \"metadata\": {}\n}"
+              schema:
+                oneOf:
+                - title: OK - CANCEL/REVOKE
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 9b89c251-6151-4561-93cc-c027f4d7f034
+                    code_identifier:
+                      type: string
+                      example: S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034
+                    consumer_uid:
+                      type: string
+                      example: 75d5c151-7b11-4bff-9149-d320dfa66461
+                    shop_uid:
+                      type: string
+                      example: e7ddb175-474a-4f5b-8820-cf96f0418c41
+                    status:
+                      type: string
+                      example: CANCELED
+                    reason:
+                      type: string
+                      example: Monthly payment
+                    callback_url:
+                      type: string
+                      example: https://myServer.com/myCallbackUrl/{uuid}
+                    metadata:
+                      type: object
+                      properties: {}
+                - title: OK - ASSOCIATE CONSUMER
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 9b89c251-6151-4561-93cc-c027f4d7f034
+                    code_identifier:
+                      type: string
+                      example: S6Y-PPT--9B89C251-6151-4561-93CC-C027F4D7F034
+                    consumer_uid:
+                      type: string
+                      example: 75d5c151-7b11-4bff-9149-d320dfa66461
+                    shop_uid:
+                      type: string
+                      example: e7ddb175-474a-4f5b-8820-cf96f0418c41
+                    status:
+                      type: string
+                      example: PENDING
+                    reason:
+                      type: string
+                      example: Monthly payment
+                    callback_url:
+                      type: string
+                      example: https://myServer.com/myCallbackUrl/{uuid}
+                    metadata:
+                      type: object
+                      properties: {}
+        '400':
+          description: '400'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Bad request
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request PUT \\\n  --url https://authservices.satispay.com/g_business/v1/pre_authorized_payment_tokens/9b89c251-6151-4561-93cc-c027f4d7f034 \\\n  --header 'Content-Type: application/json' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --data '{\n  \"status\": \"CANCELED\"\n}'"
+          name: cURL - CANCEL/REVOKE
+        - language: curl
+          code: "curl --request PUT \\\n  --url https://authservices.satispay.com/g_business/v1/pre_authorized_payment_tokens/9b89c251-6151-4561-93cc-c027f4d7f034 \\\n  --header 'Content-Type: application/json' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --data '{\n  \"consumer_uid\":\"75d5c151-7b11-4bff-9149-d320dfa66461\"\n}'"
+          name: cURL - ASSOCIATE CONSUMER
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/mqtt_certificates:
+    post:
+      summary: Create mqtt certificates
+      description: API to create a PEM certificate and the private key for a shop mqtt device.
+      operationId: create-mqtt-certificates
+      parameters:
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"uid\": \"ba3ddcaa-b19b-4476-9747-d8256131d6c0\",\n  \"shop_uid\": \"866f0500-d2a8-4f11-b118-7d5777ecc7a9\",\n  \"certificate_pem\": \"-----BEGIN CERTIFICATE-----\\nMIIDWjCCAkKgAwIBAgIVAIC7Wnz....\",\n  \"private_key\": \"-----BEGIN RSA PRIVATE KEY-----\\nMIIEpQIBAAKCAQEA6p79gcqNGfZ....\"\n}"
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    example: ba3ddcaa-b19b-4476-9747-d8256131d6c0
+                  shop_uid:
+                    type: string
+                    example: 866f0500-d2a8-4f11-b118-7d5777ecc7a9
+                  certificate_pem:
+                    type: string
+                    example: '-----BEGIN CERTIFICATE-----
+
+                      MIIDWjCCAkKgAwIBAgIVAIC7Wnz....'
+                  private_key:
+                    type: string
+                    example: '-----BEGIN RSA PRIVATE KEY-----
+
+                      MIIEpQIBAAKCAQEA6p79gcqNGfZ....'
+        '404':
+          description: '404'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Resource not found
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/mqtt_certificates \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' "
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/sessions:
+    post:
+      summary: Open session
+      description: API to open a session from a fund lock
+      operationId: open-session
+      parameters:
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        description: The idempotent token of the request
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fund_lock_uid
+              properties:
+                fund_lock_uid:
+                  type: string
+                  description: Unique ID of the fund lock
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\": \"84ab4ec4-f7bb-407d-b7d9-632c101d4ca7\",\n  \"amount_unit\": 0,\n  \"residual_amount_unit\": 100,\n  \"currency\": \"EUR\",\n  \"status\": \"OPEN\",\n  \"payment_type\": \"TO_BUSINESS_CHARGE\"\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 84ab4ec4-f7bb-407d-b7d9-632c101d4ca7
+                  amount_unit:
+                    type: integer
+                    example: 0
+                    default: 0
+                  residual_amount_unit:
+                    type: integer
+                    example: 100
+                    default: 0
+                  currency:
+                    type: string
+                    example: EUR
+                  status:
+                    type: string
+                    example: OPEN
+                  payment_type:
+                    type: string
+                    example: TO_BUSINESS_CHARGE
+        '400':
+          description: '400'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Bad request
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/sessions \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --header 'content-type: application/json' \\\n  --data '{\n\t\"fund_lock_uid\": \"b6931b5f-ddc9-4384-b91b-e6eb138cd4ca\"\n}'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/sessions/{id}/events:
+    post:
+      summary: Create session event
+      description: API to create an event for an open session
+      operationId: create-session-event
+      parameters:
+      - name: id
+        in: path
+        description: The ID of the session
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      - name: Idempotency-Key
+        in: header
+        description: The idempotent token of the request
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - operation
+              - amount_unit
+              - currency
+              properties:
+                operation:
+                  type: string
+                  description: The operation to perform on the amount (ADD/REMOVE)
+                amount_unit:
+                  type: string
+                  description: Amount of the session event in cents
+                currency:
+                  type: string
+                  description: Currency of the session event
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\": \"84ab4ec4-f7bb-407d-b7d9-632c101d4ca7\",\n  \"amount_unit\": 5,\n  \"residual_amount_unit\": 95,\n  \"currency\": \"EUR\",\n  \"status\": \"OPEN\",\n  \"payment_type\": \"TO_BUSINESS_CHARGE\"\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 84ab4ec4-f7bb-407d-b7d9-632c101d4ca7
+                  amount_unit:
+                    type: integer
+                    example: 5
+                    default: 0
+                  residual_amount_unit:
+                    type: integer
+                    example: 95
+                    default: 0
+                  currency:
+                    type: string
+                    example: EUR
+                  status:
+                    type: string
+                    example: OPEN
+                  payment_type:
+                    type: string
+                    example: TO_BUSINESS_CHARGE
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request POST \\\n  --url https://authservices.satispay.com/g_business/v1/sessions/84ab4ec4-f7bb-407d-b7d9-632c101d4ca7/events \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --header 'content-type: application/json' \\\n  --data '{\n\t\"operation\": \"ADD\",\n\t\"amount_unit\": 5,\n\t\"currency\": \"EUR\"\n}'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/sessions/{id}:
+    get:
+      summary: Get session details
+      description: API to retrieve the detail of a specific session
+      operationId: get-session-details
+      parameters:
+      - name: id
+        in: path
+        description: The id of the session
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: The signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{ \n  \"id\": \"84ab4ec4-f7bb-407d-b7d9-632c101d4ca7\",\n  \"available\": true,\n  \"consumer_uid\": \"7169aea1-c0dd-4eb2-86c4-8fdefb1e1400\",\n  \"amount_unit\": 100,\n  \"currency\": \"EUR\",\n  \"expiration_date\": \"2018-10-01T10:41:43.393Z\"\n}"
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 84ab4ec4-f7bb-407d-b7d9-632c101d4ca7
+                  available:
+                    type: boolean
+                    example: true
+                    default: true
+                  consumer_uid:
+                    type: string
+                    example: 7169aea1-c0dd-4eb2-86c4-8fdefb1e1400
+                  amount_unit:
+                    type: integer
+                    example: 100
+                    default: 0
+                  currency:
+                    type: string
+                    example: EUR
+                  expiration_date:
+                    type: string
+                    example: '2018-10-01T10:41:43.393Z'
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url https://authservices.satispay.com/g_business/v1/sessions/84ab4ec4-f7bb-407d-b7d9-632c101d4ca7 \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+    patch:
+      summary: Update session
+      description: API to change the state of the session
+      operationId: update-session
+      parameters:
+      - name: id
+        in: path
+        description: The id of the session
+        schema:
+          type: string
+        required: true
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - action
+              properties:
+                action:
+                  type: string
+                  description: The operation to perform on the session (CLOSE)
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"uid\": \"84ab4ec4-f7bb-407d-b7d9-632c101d4ca7\",\n  \"amount_unit\": 5,\n  \"residual_amount_unit\": 95,\n  \"currency\": \"EUR\",\n  \"status\": \"CLOSE\",\n  \"payment_type\": \"TO_BUSINESS_CHARGE\"\n}"
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    example: 84ab4ec4-f7bb-407d-b7d9-632c101d4ca7
+                  amount_unit:
+                    type: integer
+                    example: 5
+                    default: 0
+                  residual_amount_unit:
+                    type: integer
+                    example: 95
+                    default: 0
+                  currency:
+                    type: string
+                    example: EUR
+                  status:
+                    type: string
+                    example: CLOSE
+                  payment_type:
+                    type: string
+                    example: TO_BUSINESS_CHARGE
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: Forbidden or invalid authorization header
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request PATCH \\\n  --url https://authservices.satispay.com/g_business/v1/sessions/84ab4ec4-f7bb-407d-b7d9-632c101d4ca7 \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\\n  --header 'content-type: application/json' \\\n  --data '{\n\t\"action\": \"CLOSE\"\n}'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/vendors/{vendor}/products/{product}/os/{os_version}/software/{software}:
+    get:
+      summary: Get software version details
+      description: API to retrieve the latest software version or software version details
+      operationId: get-software-version-details
+      parameters:
+      - name: vendor
+        in: path
+        description: 'Vendor name with convention of uppercase and separated by underscore. Regex: {^[A-Z0-9\_]+$}'
+        schema:
+          type: string
+        required: true
+      - name: product
+        in: path
+        description: 'Product name with convention of uppercase and separated by underscore. Regex: {^[A-Z0-9\_]+$}'
+        schema:
+          type: string
+        required: true
+      - name: os_version
+        in: path
+        description: 'Os version number. Convention: "major.minor.build". Regex: {[0-9]{1,2}[\.]{1}[0-9]{1,4}[\.]{1}[0-9]{1,8}}'
+        schema:
+          type: string
+        required: true
+      - name: software
+        in: path
+        description: 'Software version. Convention: "major.minor.build". Regex: {^[0-9]{1,2}[\.]{1}[0-9]{1,4}[\.]{1}[0-9]{1,8}$|^latest$}'
+        schema:
+          type: string
+        required: true
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"id\":\"2.24.5\"\n\t\"url\":\"https://s3-eu-west-1.amazonaws.com/public-satispay-com/mcf88/vm01/2.24.5.zip\"\n\t\"bucket\":\"public-satispay-com\"\n\t\"key\":\"mcf88/vm01/2.24.5.zip\"\n\t\"etag\":\"a659fe4c134f875ea349b0d5575d5fdc\"\n\t\"insertDate\":\"2018-10-16T09:30:00.000Z\"\n}"
+        '400':
+          description: '400'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: '{}'
+              schema:
+                type: object
+                properties: {}
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url https://authservices.satispay.com/g_business/v1/vendors/MCF88/products/VM01/os/1.0.0/software/latest \\\n --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\""
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/reports:
+    get:
+      summary: Get list of reports
+      description: API to retrieve the list of reports previously created.
+      operationId: get-list-of-reports
+      parameters:
+      - name: limit
+        in: query
+        description: A limit on the number of objects to be returned, between 1 and 100
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: starting_after
+        in: query
+        description: Is the id that defines your place in the list when you make a reports list request
+        schema:
+          type: string
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"has_more\": false,\n  \"data\": [\n    {\n      \"type\": \"PAYMENT\",\n      \"notification\": {\n        \"email_cc_list\": [\n          \"email@mywebsite.com\"\n        ],\n        \"callback_url\": \"https://mywebsite.com/\"\n      },\n      \"query_payload\": {\n        \"to\": \"2020-02-01\",\n        \"from\": \"2020-01-15\",\n        \"time_zone\": \"Europe/Rome\",\n        \"merchant_uid\": \"743bcf2b-eb8a-11e5-bd74-0a1b47c3629f\"\n      },\n      \"id\": \"d22f74ac-5fd1-4e0d-833c-1198b1d769bc\",\n      \"status\": \"SUCCESS\",\n      \"report_download_url\": \"https://merchant-satispay-com.s3.eu-west-1.amazonaws.com/reports/743...\"\n    },\n    {\n      \"type\": \"PAYMENT\",\n      \"notification\": {\n        \"email_cc_list\": [\n          null\n        ]\n      },\n      \"query_payload\": {\n        \"to\": \"2020-02-01\",\n        \"from\": \"2020-01-15\",\n        \"time_zone\": \"Europe/Rome\",\n        \"merchant_uid\": \"743bcf2b-eb8a-11e5-bd74-0a1b47c3629f\"\n      },\n      \"id\": \"e1c4b6e7-e6be-4b43-b09e-438d48e1053d\",\n      \"status\": \"SUCCESS\",\n      \"report_download_url\": \"https://staging-merchant-satispay-com.s3.eu-west-1.amazonaws.com/reports/743...\"\n    }\n  ]\n}"
+              schema:
+                type: object
+                properties:
+                  has_more:
+                    type: boolean
+                    example: false
+                    default: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: PAYMENT
+                        notification:
+                          type: object
+                          properties:
+                            email_cc_list:
+                              type: array
+                              items:
+                                type: string
+                                example: email@mywebsite.com
+                            callback_url:
+                              type: string
+                              example: https://mywebsite.com/
+                        query_payload:
+                          type: object
+                          properties:
+                            to:
+                              type: string
+                              example: '2020-02-01'
+                            from:
+                              type: string
+                              example: '2020-01-15'
+                            time_zone:
+                              type: string
+                              example: Europe/Rome
+                            merchant_uid:
+                              type: string
+                              example: 743bcf2b-eb8a-11e5-bd74-0a1b47c3629f
+                        id:
+                          type: string
+                          example: d22f74ac-5fd1-4e0d-833c-1198b1d769bc
+                        status:
+                          type: string
+                          example: SUCCESS
+                        report_download_url:
+                          type: string
+                          example: https://merchant-satispay-com.s3.eu-west-1.amazonaws.com/reports/743...
+        '401':
+          description: '401'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: 'Error code:
+
+                    - 34 → Merchant not found'
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: 'Error code:
+
+                    - 45 → Unable to fulfil the request'
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url https://authservices.satispay.com/g_business/v1/reports \\\n  --header 'Content-Type: application/json' \\\n  --header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\  \n  --header 'Authorization: Signature keyId=\"vefn1p...\", algorithm=\"rsa-sha256\", headers=\"(request-target) host date digest\", signature=\"C5yynRx...\"' \\"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+  /g_business/v1/reports/{report_id}:
+    get:
+      summary: Retrieve a Report
+      description: Retrieve a report previously created
+      operationId: retrieve-a-report
+      parameters:
+      - name: Host
+        in: header
+        description: The host declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Date
+        in: header
+        description: The date declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Digest
+        in: header
+        description: The digest declared in the signature
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Signature of the request
+        required: true
+        schema:
+          type: string
+      - name: report_id
+        in: path
+        description: Report identifier
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          description: '200'
+          content:
+            application/json:
+              examples:
+                Result:
+                  value: "{\n  \"type\": \"PAYMENT\",\n  \"notification\": {\n    \"email_cc_list\": [\n      \"email@mywebsite.com\"\n    ],\n    \"callback_url\": \"https://mywebsite.com/\"\n  },\n  \"query_payload\": {\n    \"to\": \"2020-02-01\",\n    \"from\": \"2020-01-15\",\n    \"time_zone\": \"Europe/Rome\",\n    \"merchant_uid\": \"743bcf2b-eb8a-11e5-bd74-0a1b47c3629f\"\n  },\n  \"id\": \"d22f74ac-5fd1-4e0d-833c-1198b1d769bc\",\n  \"status\": \"SUCCESS\",\n  \"report_download_url\": \"https://merchant-satispay-com.s3.eu-west-1.amazonaws.com/reports/743...\"\n}"
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: PAYMENT
+                  notification:
+                    type: object
+                    properties:
+                      email_cc_list:
+                        type: array
+                        items:
+                          type: string
+                          example: email@mywebsite.com
+                      callback_url:
+                        type: string
+                        example: https://mywebsite.com/
+                  query_payload:
+                    type: object
+                    properties:
+                      to:
+                        type: string
+                        example: '2020-02-01'
+                      from:
+                        type: string
+                        example: '2020-01-15'
+                      time_zone:
+                        type: string
+                        example: Europe/Rome
+                      merchant_uid:
+                        type: string
+                        example: 743bcf2b-eb8a-11e5-bd74-0a1b47c3629f
+                  id:
+                    type: string
+                    example: d22f74ac-5fd1-4e0d-833c-1198b1d769bc
+                  status:
+                    type: string
+                    example: SUCCESS
+                  report_download_url:
+                    type: string
+                    example: https://merchant-satispay-com.s3.eu-west-1.amazonaws.com/reports/743...
+        '401':
+          description: '401'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: 'Error code:
+
+                    - 34 → Merchant not found'
+        '403':
+          description: '403'
+          content:
+            text/plain:
+              examples:
+                Result:
+                  value: 'Error code:
+
+                    - 45 → Unable to fulfil the request'
+      deprecated: false
+      x-readme:
+        code-samples:
+        - language: curl
+          code: "curl --request GET \\\n  --url https://authservices.satispay.com/g_business/v1/reports/d22f74ac-5fd1-4e0d-833c-1198b1d769bc \\\n\t--header 'host: authservices.satispay.com' \\\n  --header 'date: Fri, 28 Aug 2020 09:18:17 GMT' \\\n  --header 'digest: SHA-256=...' \\\n  --header 'Authorization: Signature keyId=\"vefn1'\n  --header 'content-type: application/json'"
+        samples-languages:
+        - curl
+      tags:
+      - G Business
+x-readme:
+  headers: []
+  explorer-enabled: false
+  proxy-enabled: false
+x-readme-fauxas: true
