@@ -57,3 +57,21 @@ api_pricing:
   note: >-
     Sandbox access is granted free through a request form. There is no API key price, no request quota,
     and no overage — a developer pays only when a real payment settles.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models: []
+  units: []
+  plans:
+  - name: Satispay Business — standard merchant (until September 2026)
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
+  - name: Satispay Business — standard merchant (from September 2026)
+    access: other
+    model: unstated
+    model_how: derived
+    units: []
+    periods: []
