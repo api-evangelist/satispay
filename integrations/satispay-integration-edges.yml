@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/satispay/integrations
+- https://n8n.io/integrations/satispay/
+- https://composio.dev/toolkits/satispay
+- https://monid.ai/tools/satispay
+checked:
+- https://composio.dev/toolkits/satispay
+- https://monid.ai/tools/satispay
+- https://n8n.io/integrations/satispay/
+- https://zapier.com/apps/satispay/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
