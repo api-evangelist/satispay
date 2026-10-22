@@ -13,6 +13,11 @@ checked:
 - https://euclid.eba.europa.eu/register/api/filemetadata
 - https://euclid.eba.europa.eu/register/cir/search
 - https://euclid.eba.europa.eu/register/pir/search
+- https://commercemarketplace.adobe.com/partner/
+- https://commercemarketplace.adobe.com/sitemap.xml
+- https://store.shopware.com/en/extension-partners/
+- https://store.shopware.com/en/sitemap.xml
+- adobe-commerce/integrations/adobe-commerce-integration-edges.yml
 summary: null
 marketplace_apps: []
 edges:
@@ -86,4 +91,51 @@ edges:
       P856 not contradicting (Kin 2026-10-20 decision 2)
   detected_by: sweep-eu-psd2-payment-institutions.py
   first_seen: '2026-10-21'
+- partner_name: Adobe Commerce (own)
+  partner: adobe-commerce
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://commercemarketplace.adobe.com/satispay-magento2-plugin.html
+  mirror_of: adobe-commerce/integrations/adobe-commerce-integration-edges.yml
+  apps:
+  - Satispay
+  listing_count: 1
+  detected: '2026-10-22'
+  detected_by: mirror-platform-listings.py
+  category: Adobe Commerce Marketplace extension
+- partner_name: Shopware Store
+  partner: null
+  partner_match: null
+  type: marketplace
+  marketplace: shopware-store
+  channel: partner-built
+  relationship: platform-app
+  direction: third-party
+  evidence: https://store.shopware.com/en/extension-partners/satispay
+  category: Shopware Store extension partner
+  publisher_name: Satispay
+  publisher_country: Italy
+  partner_tier:
+  - Technology Partner
+  - Extension Partner
+  matched_domain: satispay.com
+  matched_by: domain
+  identity_source: the partner's own Shopware Store profile links (domain, name-checked)
+  partner_null_note: 'there is no all/shopware repo (Shopware is a harvest candidate): the platform side cannot
+    be written, so the publisher side names the store with partner null'
+  signal_note: Shopware Store extension partner (listing alone = participation); Partner Status tier in partner_tier;
+    listing count is context, never counted
+  detected_by: sweep-ecommerce-extension-marketplaces.py
+  detected: '2026-10-22'
+  example_listing: https://store.shopware.com/en/satis23694498771f/satispay.html
+  listing_count_prefix: 1
+  badges:
+  - Shopware Technology Partner
+  publisher_verified:
+  - Shopware Technology Partner
 templates: []
