@@ -18,6 +18,9 @@ checked:
 - https://store.shopware.com/en/extension-partners/
 - https://store.shopware.com/en/sitemap.xml
 - adobe-commerce/integrations/adobe-commerce-integration-edges.yml
+- https://hex.pm/api
+- https://packagist.org/packages
+- https://pub.dev/api
 summary: null
 marketplace_apps: []
 edges:
@@ -138,4 +141,62 @@ edges:
   - Shopware Technology Partner
   publisher_verified:
   - Shopware Technology Partner
+- partner_name: Packagist
+  partner: packagist
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (PHP)
+  evidence: https://packagist.org/packages/satispay/gbusiness-api-php-sdk
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: Packagist (public registry JSON)
+    spec_file: null
+    language: PHP
+    packages:
+    - name: satispay/gbusiness-api-php-sdk
+      version: 1.4.1
+      released: '2024-10-17'
+      released_field: time
+      lapsed: true
+      page: https://packagist.org/packages/satispay/gbusiness-api-php-sdk
+      repo_leg: github-org:satispay
+      publisher_leg: org:satispay
+      matched_by: github-org
+    - name: satispay/magento2-plugin
+      version: 2.2.6
+      released: '2026-03-05'
+      released_field: time
+      lapsed: false
+      page: https://packagist.org/packages/satispay/magento2-plugin
+      repo_leg: github-org:satispay
+      publisher_leg: org:satispay
+      matched_by: github-org
+    - name: satispay/online-api-php-sdk
+      version: 1.4.1
+      released: '2024-10-17'
+      released_field: time
+      lapsed: true
+      page: https://packagist.org/packages/satispay/online-api-php-sdk
+      repo_leg: github-org:satispay
+      publisher_leg: org:satispay
+      matched_by: github-org
+      abandoned: true
+    - name: satispay/shopware6-plugin
+      version: 3.1.0
+      released: '2025-07-29'
+      released_field: time
+      lapsed: false
+      page: https://packagist.org/packages/satispay/shopware6-plugin
+      repo_leg: github-org:satispay
+      publisher_leg: org:satispay
+      matched_by: github-org
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-php-dart-elixir-package-registries.py
+    detected: '2026-10-22'
+  detected_by: sweep-php-dart-elixir-package-registries.py
+  first_seen: '2026-10-22'
 templates: []
